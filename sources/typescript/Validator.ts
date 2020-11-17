@@ -41,14 +41,14 @@ class Validator
 	{
 		const VALIDITY: ValidityState = editable.validity;
 
-		const ERROR_KEY: string | undefined = Object.getOwnPropertyNames(Object.getPrototypeOf(VALIDITY)).find(
-			(key: string): boolean =>
+		const ERROR_KEY: ErrorKey | undefined = (Object.getOwnPropertyNames(Object.getPrototypeOf(VALIDITY)) as Array<ErrorKey>).find(
+			(key: ErrorKey): boolean =>
 			{
-				return VALIDITY[key as ErrorKey];
+				return VALIDITY[key];
 			}
 		);
 
-		return (ERROR_KEY || "unknownError") as ExtendedErrorKey;
+		return ERROR_KEY || "unknownError";
 	}
 
 	// In TypeScript, RadioNodeList is not compatible with type NodeListOf<TNode extends Node>
@@ -61,6 +61,7 @@ class Validator
 	{
 		// Initialization
 
+		// Disable native validation
 		this.form.noValidate = true;
 
 		this.form.addEventListener(
@@ -69,18 +70,7 @@ class Validator
 			{
 				submit_event.preventDefault();
 				submit_event.stopImmediatePropagation();
-
-				try
-				{
-					await this.validate(true);
-				}
-				catch (error: unknown)
-				{
-					if (error instanceof Error)
-					{
-						console.log(error);
-					}
-				}
+				await this.validate(true);
 			},
 			true
 		);
@@ -90,18 +80,7 @@ class Validator
 			async (change_event: Event): Promise<void> =>
 			{
 				const EDITABLE_ELEMENT: HTMLEditableElement = change_event.target as HTMLEditableElement;
-
-				try
-				{
-					await this.validateEditable(EDITABLE_ELEMENT);
-				}
-				catch (error: unknown)
-				{
-					if (error instanceof Error)
-					{
-						console.log(error);
-					}
-				}
+				await this.validateEditable(EDITABLE_ELEMENT);
 			},
 			true
 		);
@@ -168,23 +147,14 @@ class Validator
 
 		this.isProcessing = true;
 
-		try
-		{
-			await this.validateAllFields(element);
-		}
-		catch (error: unknown)
-		{
-			if (error instanceof Error)
-			{
-				console.log(error);
-			}
-		}
+		await this.validateAllFields(element);
 
-		this.isProcessing = false;
+		// Clean after every validation to free memory
 		this.processedCollectionNames = [];
+		this.isProcessing = false;
 	}
 
-	private async validate(complete_scan: boolean): Promise<void>
+	private async validate(allow_submit: boolean): Promise<void>
 	{
 		if (this.isProcessing)
 		{
@@ -218,21 +188,24 @@ class Validator
 				}
 			}
 
-			if (valid && complete_scan && (this.configuration?.hooks?.postValidation !== undefined))
+			if (valid && allow_submit && (this.configuration?.hooks?.postValidation === undefined))
 			{
+				// Does not trigger an other submit event
 				this.form.submit();
 			}
-
-			try
+			else
 			{
-				// If used, you must handle the submit of the form
-				await this.configuration?.hooks?.postValidation?.(valid, this.form);
-			}
-			catch (error: unknown)
-			{
-				if (error instanceof Error)
+				try
 				{
-					console.log(error);
+					// Must handle the form submission
+					await this.configuration?.hooks?.postValidation?.(valid, this.form);
+				}
+				catch (error: unknown)
+				{
+					if (error instanceof Error)
+					{
+						console.log(error);
+					}
 				}
 			}
 		}
@@ -244,8 +217,9 @@ class Validator
 			}
 		}
 
-		this.isProcessing = false;
+		// Clean after every validation to free memory
 		this.processedCollectionNames = [];
+		this.isProcessing = false;
 	}
 
 	private async validateAllFields(root: HTMLFormElement | HTMLFieldSetElement): Promise<boolean>
@@ -321,7 +295,7 @@ class Validator
 
 			await this.updateField(OUTCOME, NAME, field);
 
-			return !OUTCOME.success;
+			return OUTCOME.success;
 		}
 		catch (error: unknown)
 		{
