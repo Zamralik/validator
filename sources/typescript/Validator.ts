@@ -1,6 +1,6 @@
 import type { HTMLEditableElement, HTMLFormField, ErrorKey, ExtendedErrorKey } from "definitions/types.js";
 import type { ValidatorConfiguration } from "definitions/ValidatorConfiguration.js";
-import type { FieldValidationOutcome } from "./definitions/FieldValidationOutcome.js";
+import type { FieldValidationOutcome } from "definitions/FieldValidationOutcome.js";
 
 class Validator
 {
@@ -57,10 +57,8 @@ class Validator
 		return (field instanceof RadioNodeList);
 	}
 
-	public start(): void
+	public watch(): void
 	{
-		// Initialization
-
 		// Disable native validation
 		this.form.noValidate = true;
 

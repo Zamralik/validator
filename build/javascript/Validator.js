@@ -16,14 +16,14 @@ class Validator {
         this.isProcessing = false;
         this.processedCollectionNames = [];
     }
-    static GetErrorKey(editable) {
+    static getErrorKey(editable) {
         const VALIDITY = editable.validity;
         const ERROR_KEY = Object.getOwnPropertyNames(Object.getPrototypeOf(VALIDITY)).find((key) => {
             return VALIDITY[key];
         });
-        return (ERROR_KEY || "unknownError");
+        return ERROR_KEY || "unknownError";
     }
-    static IsCollection(field) {
+    static isCollection(field) {
         return (field instanceof RadioNodeList);
     }
     watch() {
@@ -31,25 +31,11 @@ class Validator {
         this.form.addEventListener("submit", async (submit_event) => {
             submit_event.preventDefault();
             submit_event.stopImmediatePropagation();
-            try {
-                await this.validate(true);
-            }
-            catch (error) {
-                if (error instanceof Error) {
-                    console.log(error);
-                }
-            }
+            await this.validate(true);
         }, true);
         this.form.addEventListener("change", async (change_event) => {
             const EDITABLE_ELEMENT = change_event.target;
-            try {
-                await this.validateEditable(EDITABLE_ELEMENT);
-            }
-            catch (error) {
-                if (error instanceof Error) {
-                    console.log(error);
-                }
-            }
+            await this.validateEditable(EDITABLE_ELEMENT);
         }, true);
     }
     async validateForm() {
@@ -91,18 +77,11 @@ class Validator {
             return;
         }
         this.isProcessing = true;
-        try {
-            await this.validateAllFields(element);
-        }
-        catch (error) {
-            if (error instanceof Error) {
-                console.log(error);
-            }
-        }
-        this.isProcessing = false;
+        await this.validateAllFields(element);
         this.processedCollectionNames = [];
+        this.isProcessing = false;
     }
-    async validate(complete_scan) {
+    async validate(allow_submit) {
         if (this.isProcessing) {
             return;
         }
@@ -121,15 +100,17 @@ class Validator {
                     valid = false;
                 }
             }
-            if (valid && complete_scan && (this.configuration?.hooks?.postValidation !== undefined)) {
+            if (valid && allow_submit && (this.configuration?.hooks?.postValidation === undefined)) {
                 this.form.submit();
             }
-            try {
-                await this.configuration?.hooks?.postValidation?.(valid, this.form);
-            }
-            catch (error) {
-                if (error instanceof Error) {
-                    console.log(error);
+            else {
+                try {
+                    await this.configuration?.hooks?.postValidation?.(valid, this.form);
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        console.log(error);
+                    }
                 }
             }
         }
@@ -138,8 +119,8 @@ class Validator {
                 console.log(error);
             }
         }
-        this.isProcessing = false;
         this.processedCollectionNames = [];
+        this.isProcessing = false;
     }
     async validateAllFields(root) {
         try {
@@ -179,7 +160,7 @@ class Validator {
             }
             const OUTCOME = await this.validateField(NAME, field);
             await this.updateField(OUTCOME, NAME, field);
-            return !OUTCOME.success;
+            return OUTCOME.success;
         }
         catch (error) {
             if (error instanceof Error) {
@@ -204,7 +185,7 @@ class Validator {
                 reason: "unknownError",
             };
         }
-        if (Validator.IsCollection(field)) {
+        if (Validator.isCollection(field)) {
             const VALID = Array.from(field).every((input) => {
                 return input.checkValidity();
             });
@@ -218,7 +199,7 @@ class Validator {
         else if (!field.checkValidity()) {
             return {
                 success: false,
-                reason: Validator.GetErrorKey(field),
+                reason: Validator.getErrorKey(field),
             };
         }
         try {
@@ -253,7 +234,7 @@ class Validator {
             }
             const CONTAINER_SELECTOR = this.configuration?.container;
             if (CONTAINER_SELECTOR) {
-                const CONTAINER = (Validator.IsCollection(field) ? field[0] : field).closest(CONTAINER_SELECTOR);
+                const CONTAINER = (Validator.isCollection(field) ? field[0] : field).closest(CONTAINER_SELECTOR);
                 if (CONTAINER) {
                     const OLD_STYLE = outcome.success ? this.configuration?.styles?.invalid : this.configuration?.styles?.valid;
                     const NEW_STYLE = outcome.success ? this.configuration?.styles?.valid : this.configuration?.styles?.invalid;
