@@ -1,0 +1,28 @@
+{
+	"compilerOptions": {
+		"outDir": "build/javascript",
+		"allowJs": false,
+		"target": "es2020",
+		"lib": ["dom", "es2020"],
+		"module": "ES2020",
+		"sourceMap": false,
+		"esModuleInterop": false,
+		"charset": "UTF-8",
+		"newLine": "LF",
+		"strict": true,
+		"alwaysStrict": true,
+		"removeComments": true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"allowUnusedLabels": false,
+		"allowUnreachableCode": false,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true
+	},
+	"include": [
+		"sources/typescript"
+	]
+}
