@@ -241,7 +241,13 @@
 			"error",
 			{
 				"before": false,
-				"after": true
+				"after": true,
+				"overrides": {
+					"arrow": {
+						"before": true,
+						"after": true
+					}
+				}
 			}
 		],
 		"@typescript-eslint/typedef": "error",
@@ -713,13 +719,7 @@
 		/* *** Javascript rules: styling *** */
 		/* ********************************* */
 
-		"array-bracket-newline": [
-			"error",
-			{
-				"multiline": true,
-				"minItems": null
-			}
-		],
+		"array-bracket-newline": ["error", "consistent"],
 		"array-bracket-spacing": [
 			"error",
 			"never",
@@ -731,7 +731,10 @@
 		],
 		"array-element-newline": [
 			"error",
-			"consistent"
+			{
+				"consistent": true,
+				"multiline": true
+			}
 		],
 		"block-spacing": ["error", "always"],
 		"camelcase": "off",
