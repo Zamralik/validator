@@ -1190,6 +1190,11 @@
 		"import/no-deprecated": "error",
 		"import/no-unassigned-import": "error",
 		"import/order": "error",
-		"prefer-arrow/prefer-arrow-functions": "error"
+		"prefer-arrow/prefer-arrow-functions": [
+			"error",
+			{
+				"allowStandaloneDeclarations": true
+			}
+		]
 	}
 }
