@@ -769,7 +769,8 @@
 				"properties": "always",
 				"exceptionPatterns": [
 					"^\\w$",
-					"^key$"
+					"^key$",
+					"^url$"
 				]
 			}
 		],
