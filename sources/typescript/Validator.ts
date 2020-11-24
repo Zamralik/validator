@@ -328,7 +328,7 @@ class Validator
 
 			return {
 				success: false,
-				reason: "unknownError",
+				reason: "unknownError"
 			};
 		}
 
@@ -347,7 +347,7 @@ class Validator
 			{
 				return {
 					success: false,
-					reason: "valueMissing",
+					reason: "valueMissing"
 				};
 			}
 		}
@@ -355,7 +355,7 @@ class Validator
 		{
 			return {
 				success: false,
-				reason: Validator.getErrorKey(field),
+				reason: Validator.getErrorKey(field)
 			};
 		}
 
@@ -373,12 +373,12 @@ class Validator
 
 			return {
 				success: false,
-				reason: "customError",
+				reason: "customError"
 			};
 		}
 
 		return {
-			success: true,
+			success: true
 		};
 	}
 
