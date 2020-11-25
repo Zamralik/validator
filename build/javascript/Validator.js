@@ -182,7 +182,7 @@ class Validator {
             }
             return {
                 success: false,
-                reason: "unknownError",
+                reason: "unknownError"
             };
         }
         if (Validator.isCollection(field)) {
@@ -192,14 +192,14 @@ class Validator {
             if (!VALID) {
                 return {
                     success: false,
-                    reason: "valueMissing",
+                    reason: "valueMissing"
                 };
             }
         }
         else if (!field.checkValidity()) {
             return {
                 success: false,
-                reason: Validator.getErrorKey(field),
+                reason: Validator.getErrorKey(field)
             };
         }
         try {
@@ -211,11 +211,11 @@ class Validator {
             }
             return {
                 success: false,
-                reason: "customError",
+                reason: "customError"
             };
         }
         return {
-            success: true,
+            success: true
         };
     }
     async updateField(outcome, field_name, field) {
@@ -250,10 +250,10 @@ class Validator {
                         if (MESSENGER) {
                             if (!message) {
                                 if (outcome.success) {
-                                    message = this.getValidMessage(name);
+                                    message = this.getValidMessage(field_name);
                                 }
                                 else {
-                                    message = this.getErrorMessage(name, outcome.reason);
+                                    message = this.getErrorMessage(field_name, outcome.reason);
                                 }
                             }
                             MESSENGER.textContent = message;

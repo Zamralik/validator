@@ -439,11 +439,11 @@ class Validator
 							{
 								if (outcome.success)
 								{
-									message = this.getValidMessage(name);
+									message = this.getValidMessage(field_name);
 								}
 								else
 								{
-									message = this.getErrorMessage(name, outcome.reason);
+									message = this.getErrorMessage(field_name, outcome.reason);
 								}
 							}
 
