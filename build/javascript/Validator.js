@@ -19,7 +19,7 @@ class Validator {
     static getErrorKey(editable) {
         const VALIDITY = editable.validity;
         const ERROR_KEY = Object.getOwnPropertyNames(Object.getPrototypeOf(VALIDITY)).find((key) => {
-            return VALIDITY[key];
+            return VALIDITY[key] === true;
         });
         return ERROR_KEY || "unknownError";
     }

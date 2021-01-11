@@ -41,12 +41,12 @@ class Validator
 	{
 		const VALIDITY: ValidityState = editable.validity;
 
-		const ERROR_KEY: ErrorKey | undefined = (Object.getOwnPropertyNames(Object.getPrototypeOf(VALIDITY)) as Array<ErrorKey>).find(
-			(key: ErrorKey): boolean =>
+		const ERROR_KEY: ErrorKey | undefined = Object.getOwnPropertyNames(Object.getPrototypeOf(VALIDITY)).find(
+			(key: string): boolean =>
 			{
-				return VALIDITY[key];
+				return VALIDITY[key as ErrorKey] === true;
 			}
-		);
+		) as ErrorKey | undefined;
 
 		return ERROR_KEY || "unknownError";
 	}
