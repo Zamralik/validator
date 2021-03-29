@@ -45,6 +45,9 @@ interface ValidatorConfiguration
 		validation?: (form: HTMLFormElement) => void | Promise<void>;
 		// If defined, the form must be submitted manually (form.submit()).
 		postValidation?: (valid: boolean, form: HTMLFormElement) => void | Promise<void>;
+		// If defined, the form must be submitted manually (form.submit()).
+		onValidationSuccess?: (form: HTMLFormElement) => void | Promise<void>;
+		onValidationFailure?: (form: HTMLFormElement) => void | Promise<void>;
 	};
 	fields?: {
 		// Each field can be referenced by its name (surround names with special characters with quotes).

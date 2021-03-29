@@ -186,7 +186,18 @@ class Validator
 				}
 			}
 
-			if (valid && allow_submit && (this.configuration?.hooks?.postValidation === undefined))
+			const HOOK_POST_VALIDATION = this.configuration?.hooks?.postValidation;
+			const HOOK_ON_VALIDATION_SUCCESS = valid ? (this.configuration?.hooks?.onValidationSuccess) : undefined;
+
+			if (
+				valid
+				&&
+				allow_submit
+				&&
+				HOOK_POST_VALIDATION === undefined
+				&&
+				HOOK_ON_VALIDATION_SUCCESS === undefined
+			)
 			{
 				// Does not trigger an other submit event
 				this.form.submit();
@@ -196,7 +207,17 @@ class Validator
 				try
 				{
 					// Must handle the form submission
-					await this.configuration?.hooks?.postValidation?.(valid, this.form);
+					await HOOK_POST_VALIDATION?.(valid, this.form);
+
+					if (valid)
+					{
+						// Must handle the form submission
+						await HOOK_ON_VALIDATION_SUCCESS?.(this.form);
+					}
+					else
+					{
+						await this.configuration?.hooks?.onValidationFailure?.(this.form);
+					}
 				}
 				catch (error: unknown)
 				{
