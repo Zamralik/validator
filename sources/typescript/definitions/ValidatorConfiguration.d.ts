@@ -3,7 +3,7 @@
 /* eslint-disable line-comment-position */
 /* eslint-disable no-inline-comments */
 
-import type { HTMLFormField } from "definitions/types.js";
+import type { HTMLFormField } from "./types.js";
 
 interface ValidatorMessages
 {
@@ -44,7 +44,7 @@ interface ValidatorConfiguration
 		// Global validation, occurs if all fields natively valid.
 		validation?: (form: HTMLFormElement) => void | Promise<void>;
 		// If defined, the form must be submitted manually (form.submit()).
-		postValidation?: (valid: boolean, form: HTMLFormElement) => void | Promise<void>;
+		postValidation?: (form: HTMLFormElement, valid: boolean) => void | Promise<void>;
 		// If defined, the form must be submitted manually (form.submit()).
 		onValidationSuccess?: (form: HTMLFormElement) => void | Promise<void>;
 		onValidationFailure?: (form: HTMLFormElement) => void | Promise<void>;
@@ -58,7 +58,11 @@ interface ValidatorConfiguration
 				// Occurs after browser validation, an error or rejection fails the validation.
 				validation?: (field: HTMLFormField) => void | Promise<void>;
 				// If it resolved to a string, it is used in place of any other message.
-				postValidation?: (valid: boolean, field: HTMLFormField) => undefined | string | Promise<undefined | string>;
+				postValidation?: (field: HTMLFormField, valid: boolean) => undefined | string | Promise<undefined | string>;
+				// If it resolved to a string, it is used in place of any other message.
+				onValidationSuccess?: (field: HTMLFormField) => undefined | string | Promise<undefined | string>;
+				// If it resolved to a string, it is used in place of any other message.
+				onValidationFailure?: (field: HTMLFormField) => undefined | string | Promise<undefined | string>;
 			};
 			// Custom messages for this field, see message priority.
 			messages?: ValidatorMessages;

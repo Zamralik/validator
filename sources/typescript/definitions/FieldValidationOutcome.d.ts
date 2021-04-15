@@ -1,4 +1,4 @@
-import type { ExtendedErrorKey } from "types.js";
+import type { ExtendedErrorKey } from "./types.js";
 
 interface ValidOutcome
 {

@@ -113,7 +113,7 @@ class Validator {
             }
             else {
                 try {
-                    await HOOK_POST_VALIDATION?.(valid, this.form);
+                    await HOOK_POST_VALIDATION?.(this.form, valid);
                     if (valid) {
                         await HOOK_ON_VALIDATION_SUCCESS?.(this.form);
                     }
@@ -236,9 +236,28 @@ class Validator {
         try {
             let message = undefined;
             try {
-                const CUSTOM_MESSAGE = await this.configuration?.fields?.[field_name]?.hooks?.postValidation?.(outcome.success, field);
+                const CUSTOM_MESSAGE = await this.configuration?.fields?.[field_name]?.hooks?.postValidation?.(field, outcome.success);
                 if (typeof CUSTOM_MESSAGE === "string") {
                     message = CUSTOM_MESSAGE;
+                }
+            }
+            catch (error) {
+                if (error instanceof Error) {
+                    console.log(error);
+                }
+            }
+            try {
+                if (outcome.success) {
+                    const CUSTOM_MESSAGE = await this.configuration?.fields?.[field_name]?.hooks?.onValidationSuccess?.(field);
+                    if (typeof CUSTOM_MESSAGE === "string") {
+                        message = CUSTOM_MESSAGE;
+                    }
+                }
+                else {
+                    const CUSTOM_MESSAGE = await this.configuration?.fields?.[field_name]?.hooks?.onValidationFailure?.(field);
+                    if (typeof CUSTOM_MESSAGE === "string") {
+                        message = CUSTOM_MESSAGE;
+                    }
                 }
             }
             catch (error) {

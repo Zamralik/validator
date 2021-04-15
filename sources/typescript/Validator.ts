@@ -1,6 +1,6 @@
-import type { HTMLEditableElement, HTMLFormField, ErrorKey, ExtendedErrorKey } from "definitions/types.js";
-import type { ValidatorConfiguration } from "definitions/ValidatorConfiguration.js";
-import type { FieldValidationOutcome } from "definitions/FieldValidationOutcome.js";
+import type { HTMLEditableElement, HTMLFormField, ErrorKey, ExtendedErrorKey } from "./definitions/types.js";
+import type { ValidatorConfiguration } from "./definitions/ValidatorConfiguration.js";
+import type { FieldValidationOutcome } from "./definitions/FieldValidationOutcome.js";
 
 class Validator
 {
@@ -207,7 +207,7 @@ class Validator
 				try
 				{
 					// Must handle the form submission
-					await HOOK_POST_VALIDATION?.(valid, this.form);
+					await HOOK_POST_VALIDATION?.(this.form, valid);
 
 					if (valid)
 					{
@@ -412,11 +412,42 @@ class Validator
 			try
 			{
 				// If resolved with a string, override message
-				const CUSTOM_MESSAGE: string | undefined = await this.configuration?.fields?.[field_name]?.hooks?.postValidation?.(outcome.success, field);
+				const CUSTOM_MESSAGE: string | undefined = await this.configuration?.fields?.[field_name]?.hooks?.postValidation?.(field, outcome.success);
 
 				if (typeof CUSTOM_MESSAGE === "string")
 				{
 					message = CUSTOM_MESSAGE;
+				}
+			}
+			catch (error: unknown)
+			{
+				if (error instanceof Error)
+				{
+					console.log(error);
+				}
+			}
+
+			try
+			{
+				if (outcome.success)
+				{
+					// If resolved with a string, override message
+					const CUSTOM_MESSAGE: string | undefined = await this.configuration?.fields?.[field_name]?.hooks?.onValidationSuccess?.(field);
+
+					if (typeof CUSTOM_MESSAGE === "string")
+					{
+						message = CUSTOM_MESSAGE;
+					}
+				}
+				else
+				{
+					// If resolved with a string, override message
+					const CUSTOM_MESSAGE: string | undefined = await this.configuration?.fields?.[field_name]?.hooks?.onValidationFailure?.(field);
+
+					if (typeof CUSTOM_MESSAGE === "string")
+					{
+						message = CUSTOM_MESSAGE;
+					}
 				}
 			}
 			catch (error: unknown)
