@@ -14,8 +14,8 @@ class Validator {
             }
         }
         this.configuration = configuration;
-        this.isProcessing = false;
         this.processedCollectionNames = [];
+        this.isProcessing = false;
     }
     static getErrorKey(editable) {
         const VALIDITY = editable.validity;

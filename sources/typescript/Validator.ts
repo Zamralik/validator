@@ -35,8 +35,8 @@ class Validator
 		}
 
 		this.configuration = configuration;
-		this.isProcessing = false;
 		this.processedCollectionNames = [];
+		this.isProcessing = false;
 	}
 
 	private static getErrorKey(editable: HTMLEditableElement): ExtendedErrorKey
