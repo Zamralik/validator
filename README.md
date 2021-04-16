@@ -114,21 +114,21 @@ Will be ignored if a message was given by a hook.
 
 ## Validation process
 
-- form preValidation() hook
+- form `preValidation()` hook
 - loop through fields
-	- field preValidation() hook
+	- field `preValidation()` hook
 	- if (field is still valid)
 		-field browser validation
 	- if (field is still valid)
-		- field validation() hook
-	- field postValidation() hook
+		- field `validation()` hook
+	- field `postValidation()` hook
 	- if (field is valid)
-		- field onValidationSuccess() hook
+		- field `onValidationSuccess()` hook
 	- else
-		- field onValidationFailure() hook
-- form validation() hook
-- form postValidation() hook
+		- field `onValidationFailure()` hook
+- form `validation()` hook
+- form `postValidation()` hook
 - if (everything is valid)
-	- form onValidationSuccess() hook
+	- form `onValidationSuccess()` hook
 - else
-	- form onValidationFailure() hook
+	- form `onValidationFailure()` hook
