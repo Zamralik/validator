@@ -123,7 +123,7 @@ form preValidation() hook
 if no error occured
 
 	loop through fields
-
+	{
 		field preValidation() hook
 
 		if field is still valid
@@ -138,6 +138,7 @@ if no error occured
 			field onValidationSuccess() hook
 		else
 			field onValidationFailure() hook
+	}
 
 	if all fields are individually valid
 		form validation() hook
