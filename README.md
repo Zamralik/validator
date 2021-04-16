@@ -7,8 +7,6 @@ Everything is optional
 - **container**<br />
 	Type `string`.<br />
 	CSS selector matching the root element on which the CSS classes will be toggled.
-	If missing or not found, will default to a common ancestor (for checkbox/radio inputs sharing a name),
-	the closest label, the parent element, or the fields themselves.
 - **styles**
 	- **valid**<br />
 		Type `string`.<br />
@@ -18,12 +16,13 @@ Everything is optional
 		CSS class added when field is invalid, default to "is-invalid".
 - **messenger**<br />
 	Type `string`.<br />
-	CSS selector to find the element, descendant of the container, in which appropriate messages will be inserted.
+	CSS selector to find the element in which appropriate messages will be inserted.
+	It must be a descendant of the container.
 - **messages**<br />
 	Type `ValidatorMessages`<br />
 	See [Message Configuration](#message-configuration).
 - **hooks**<br />
-	See [Validation process](#validation-process) for the hook order of execution. Any hook can be asynchronous.
+	See [Validation process](#validation-process) for how each hook is used. Any hook can be asynchronous.
 	- **preValidation**<br />
 		Type `(form: HTMLFormElement) => void | Promise<void>`<br />
 		An error or rejection cancel the validation of the form.
@@ -40,8 +39,9 @@ Everything is optional
 		Type `(form: HTMLFormElement) => void | Promise<void>`;
 - **fields**<br />
 	Type `Record<string, ValidatorFieldConfiguration>`<br />
-	Each configuration is associated by its name used as key. Surround names with special characters with quotes.
-	See [Field Configuration](#field-configuration)
+	Keys must be the name of the field on which to use the configuration.<br />
+	Field names with special characters must be enclosed in quotes.<br />
+	See [Field Configuration](#field-configuration).
 
 ## Field Configuration
 
@@ -49,7 +49,7 @@ Everything is optional
 	Type `ValidatorMessages`<br />
 	See [Message Configuration](#message-configuration).
 - **hooks**<br />
-	See [Validation process](#validation-process) for the hook order of execution. Any hook can be asynchronous.
+	See [Validation process](#validation-process) for how each hook is used. Any hook can be asynchronous.
 	- **preValidation**:<br />
 		Type `(field: HTMLFormField) => void | Promise<void>`<br />
 		Executed before browser validation, it can be used to clean the value beforehand.
