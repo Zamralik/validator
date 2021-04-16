@@ -10,9 +10,9 @@ class Validator
 
 	private readonly configuration: ValidatorConfiguration | undefined;
 
-	private isProcessing: boolean;
-
 	private processedCollectionNames: Array<string>;
+
+	private isProcessing: boolean;
 
 	public constructor(form: string | HTMLFormElement, configuration?: ValidatorConfiguration)
 	{
