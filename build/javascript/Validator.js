@@ -1,3 +1,8 @@
+class ValidationError {
+    constructor(message) {
+        this.message = message;
+    }
+}
 class Validator {
     constructor(form, configuration) {
         if (form instanceof HTMLFormElement) {
@@ -196,7 +201,8 @@ class Validator {
             }
             return {
                 success: false,
-                reason: "unknownError"
+                reason: "unknownError",
+                customMessage: (error instanceof ValidationError) ? error.message : undefined
             };
         }
         if (Validator.isCollection(field)) {
@@ -225,7 +231,8 @@ class Validator {
             }
             return {
                 success: false,
-                reason: "customError"
+                reason: "customError",
+                customMessage: (error instanceof ValidationError) ? error.message : undefined
             };
         }
         return {
@@ -234,7 +241,7 @@ class Validator {
     }
     async updateField(outcome, field_name, field) {
         try {
-            let message = undefined;
+            let message = outcome.customMessage;
             try {
                 const CUSTOM_MESSAGE = await this.configuration?.fields?.[field_name]?.hooks?.postValidation?.(field, outcome.success);
                 if (typeof CUSTOM_MESSAGE === "string") {
@@ -320,4 +327,4 @@ class Validator {
                 "Invalid field");
     }
 }
-export { Validator };
+export { Validator, ValidationError };

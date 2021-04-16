@@ -2,6 +2,16 @@ import type { HTMLEditableElement, HTMLFormField, ErrorKey, ExtendedErrorKey } f
 import type { ValidatorConfiguration } from "./definitions/ValidatorConfiguration.js";
 import type { FieldValidationOutcome } from "./definitions/FieldValidationOutcome.js";
 
+class ValidationError
+{
+	public message: string;
+
+	constructor(message: string)
+	{
+		this.message = message;
+	}
+}
+
 class Validator
 {
 	private readonly form: HTMLFormElement;
@@ -349,7 +359,8 @@ class Validator
 
 			return {
 				success: false,
-				reason: "unknownError"
+				reason: "unknownError",
+				customMessage: (error instanceof ValidationError) ? error.message : undefined
 			};
 		}
 
@@ -394,7 +405,8 @@ class Validator
 
 			return {
 				success: false,
-				reason: "customError"
+				reason: "customError",
+				customMessage: (error instanceof ValidationError) ? error.message : undefined
 			};
 		}
 
@@ -407,7 +419,7 @@ class Validator
 	{
 		try
 		{
-			let message: string | undefined = undefined;
+			let message: string | undefined = outcome.customMessage;
 
 			try
 			{
@@ -541,4 +553,4 @@ class Validator
 	}
 }
 
-export { Validator };
+export { Validator, ValidationError };

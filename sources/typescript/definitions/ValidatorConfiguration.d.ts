@@ -54,14 +54,16 @@ interface ValidatorConfiguration
 		[fieldName: string]: {
 			hooks?: {
 				// Occurs before browser validation, an error or rejection fails the validation.
+				// If throws a ValidationError, it is used as message.
 				preValidation?: (field: HTMLFormField) => void | Promise<void>;
 				// Occurs after browser validation, an error or rejection fails the validation.
+				// If throws a ValidationError, it is used as message.
 				validation?: (field: HTMLFormField) => void | Promise<void>;
-				// If it resolved to a string, it is used in place of any other message.
+				// If resolved with a string, it is used as message
 				postValidation?: (field: HTMLFormField, valid: boolean) => undefined | string | Promise<undefined | string>;
-				// If it resolved to a string, it is used in place of any other message.
+				// If resolved with a string, it is used as message
 				onValidationSuccess?: (field: HTMLFormField) => undefined | string | Promise<undefined | string>;
-				// If it resolved to a string, it is used in place of any other message.
+				// If resolved with a string, it is used as message
 				onValidationFailure?: (field: HTMLFormField) => undefined | string | Promise<undefined | string>;
 			};
 			// Custom messages for this field, see message priority.
