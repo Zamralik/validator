@@ -6,7 +6,7 @@ Everything is optional
 
 - **container**<br />
 	Type `string`.<br />
-	CSS selector matching the root element on which the CSS classes will be toggled.
+	CSS selector matching the field's ancestor element on which the CSS classes will be toggled.
 - **styles**
 	- **valid**<br />
 		Type `string`.<br />
@@ -16,8 +16,7 @@ Everything is optional
 		CSS class added when field is invalid, default to "is-invalid".
 - **messenger**<br />
 	Type `string`.<br />
-	CSS selector to find the element in which appropriate messages will be inserted.
-	It must be a descendant of the container.
+	CSS selector of the container's descendant in which appropriate messages will be inserted.
 - **messages**<br />
 	Type `ValidatorMessages`<br />
 	See [Message Configuration](#message-configuration).
