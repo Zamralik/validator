@@ -2,15 +2,7 @@ import type { HTMLEditableElement, HTMLFormField, ErrorKey, ExtendedErrorKey } f
 import type { ValidatorConfiguration } from "./definitions/ValidatorConfiguration.js";
 import type { FieldValidationOutcome } from "./definitions/FieldValidationOutcome.js";
 
-class ValidationError
-{
-	public readonly message: string;
-
-	constructor(message: string)
-	{
-		this.message = message;
-	}
-}
+import { ValidationError } from "./ValidationError.js";
 
 class Validator
 {
@@ -196,17 +188,14 @@ class Validator
 				}
 			}
 
-			const HOOK_POST_VALIDATION = this.configuration?.hooks?.postValidation;
-			const HOOK_ON_VALIDATION_SUCCESS = valid ? (this.configuration?.hooks?.onValidationSuccess) : undefined;
-
 			if (
 				valid
 				&&
 				allow_submit
 				&&
-				HOOK_POST_VALIDATION === undefined
+				!(this.configuration?.hooks?.postValidation)
 				&&
-				HOOK_ON_VALIDATION_SUCCESS === undefined
+				!(this.configuration?.hooks?.onValidationSuccess)
 			)
 			{
 				// Does not trigger an other submit event
@@ -216,13 +205,11 @@ class Validator
 			{
 				try
 				{
-					// Must handle the form submission
-					await HOOK_POST_VALIDATION?.(this.form, valid);
+					await this.configuration?.hooks?.postValidation?.(this.form, valid);
 
 					if (valid)
 					{
-						// Must handle the form submission
-						await HOOK_ON_VALIDATION_SUCCESS?.(this.form);
+						await this.configuration?.hooks?.onValidationSuccess?.(this.form);
 					}
 					else
 					{
@@ -553,4 +540,4 @@ class Validator
 	}
 }
 
-export { Validator, ValidationError };
+export { Validator };

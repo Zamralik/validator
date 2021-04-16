@@ -1,8 +1,4 @@
-class ValidationError {
-    constructor(message) {
-        this.message = message;
-    }
-}
+import { ValidationError } from "./ValidationError.js";
 class Validator {
     constructor(form, configuration) {
         if (form instanceof HTMLFormElement) {
@@ -105,22 +101,20 @@ class Validator {
                     valid = false;
                 }
             }
-            const HOOK_POST_VALIDATION = this.configuration?.hooks?.postValidation;
-            const HOOK_ON_VALIDATION_SUCCESS = valid ? (this.configuration?.hooks?.onValidationSuccess) : undefined;
             if (valid
                 &&
                     allow_submit
                 &&
-                    HOOK_POST_VALIDATION === undefined
+                    !(this.configuration?.hooks?.postValidation)
                 &&
-                    HOOK_ON_VALIDATION_SUCCESS === undefined) {
+                    !(this.configuration?.hooks?.onValidationSuccess)) {
                 this.form.submit();
             }
             else {
                 try {
-                    await HOOK_POST_VALIDATION?.(this.form, valid);
+                    await this.configuration?.hooks?.postValidation?.(this.form, valid);
                     if (valid) {
-                        await HOOK_ON_VALIDATION_SUCCESS?.(this.form);
+                        await this.configuration?.hooks?.onValidationSuccess?.(this.form);
                     }
                     else {
                         await this.configuration?.hooks?.onValidationFailure?.(this.form);
@@ -327,4 +321,4 @@ class Validator {
                 "Invalid field");
     }
 }
-export { Validator, ValidationError };
+export { Validator };
