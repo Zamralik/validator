@@ -79,6 +79,8 @@ Will be ignored if a message was given by a hook.
 
 ### Message keys
 
+All the properties are optionals and of type `string`.
+
 - **valid**<br />
 	Displayed when the field is valid. Defaults to an empty string.
 - **invalid**<br />
