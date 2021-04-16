@@ -50,9 +50,7 @@ interface ValidatorConfiguration
 		onValidationSuccess?: (form: HTMLFormElement) => void | Promise<void>;
 		onValidationFailure?: (form: HTMLFormElement) => void | Promise<void>;
 	};
-	fields?: {
-		[fieldName: string]: ValidatorFieldConfiguration;
-	};
+	fields?: Record<string, ValidatorFieldConfiguration>;
 }
 
 export type { ValidatorConfiguration, ValidatorFieldConfiguration, ValidatorMessages };
