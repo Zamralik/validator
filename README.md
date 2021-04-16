@@ -117,23 +117,35 @@ All the properties are optionals and of type `string`.
 
 ## Validation process
 
-- form `preValidation()` hook
-- if no error occured
-	- loop through fields
-		- field `preValidation()` hook
-		- if field is still valid
-			- field browser validation
-		- if field is still valid
-			- field `validation()` hook
-		- field `postValidation()` hook
-		- if field is valid
-			- field `onValidationSuccess()` hook
-		- else
-			- field `onValidationFailure()` hook
-	- if all fields are individually valid
-		- form `validation()` hook
-	- form `postValidation()` hook
-	- if everything is valid
-		- form `onValidationSuccess()` hook
-	- else
-		- form `onValidationFailure()` hook
+```
+form preValidation() hook
+
+if no error occured
+
+	loop through fields
+
+		field preValidation() hook
+
+		if field is still valid
+			field browser validation
+
+		if field is still valid
+			field validation() hook
+
+		field postValidation() hook
+
+		if field is valid
+			field onValidationSuccess() hook
+		else
+			field onValidationFailure() hook
+
+	if all fields are individually valid
+		form validation() hook
+
+	form postValidation() hook
+
+	if everything is valid
+		form onValidationSuccess() hook
+	else
+		form onValidationFailure() hook
+```
