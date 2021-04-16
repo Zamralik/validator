@@ -75,6 +75,7 @@ Everything is optional
 
 Messages are displayed per field based on its validation status.
 Will be ignored if a message was given by a hook.
+Any message is interpreted as raw text, not as HTML.
 
 ### Message keys
 
