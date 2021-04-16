@@ -23,7 +23,7 @@ Everything is optional
 	Type `ValidatorMessages`<br />
 	See [Message Configuration](#message-configuration).
 - **hooks**<br />
-	See [Validation process](#validation-process) for the hook order of execution.
+	See [Validation process](#validation-process) for the hook order of execution. Any hook can be asynchronous.
 	- **preValidation**<br />
 		Type `(form: HTMLFormElement) => void | Promise<void>`<br />
 		An error or rejection cancel the validation of the form.
@@ -48,7 +48,8 @@ Everything is optional
 - **messages**<br />
 	Type `ValidatorMessages`<br />
 	See [Message Configuration](#message-configuration).
-- **hooks**
+- **hooks**<br />
+	See [Validation process](#validation-process) for the hook order of execution. Any hook can be asynchronous.
 	- **preValidation**:<br />
 		Type `(field: HTMLFormField) => void | Promise<void>`<br />
 		Executed before browser validation, it can be used to clean the value beforehand.
