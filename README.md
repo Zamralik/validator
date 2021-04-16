@@ -126,7 +126,8 @@ Will be ignored if a message was given by a hook.
 		- field `onValidationSuccess()` hook
 	- else
 		- field `onValidationFailure()` hook
-- form `validation()` hook
+- if everything is valid
+	- form `validation()` hook
 - form `postValidation()` hook
 - if (everything is valid)
 	- form `onValidationSuccess()` hook
