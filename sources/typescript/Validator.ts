@@ -4,7 +4,7 @@ import type { FieldValidationOutcome } from "./definitions/FieldValidationOutcom
 
 class ValidationError
 {
-	public message: string;
+	public readonly message: string;
 
 	constructor(message: string)
 	{
