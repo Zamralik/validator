@@ -107,10 +107,10 @@ Will be ignored if a message was given by a hook.
 
 ### Messages order priority
 
-1. configuration.fields[fieldname].messages[specificError]
-1. configuration.fields[fieldname].messages.invalid
-1. configuration.messages[specificError]
-1. configuration.messages.invalid
+1. `configuration` &#10142; `fields` &#10142; `[fieldname]` &#10142; `messages` &#10142; `[specificError]`
+1. `configuration` &#10142; `fields` &#10142; `[fieldname]` &#10142; `messages` &#10142; `invalid`
+1. `configuration` &#10142; `messages` &#10142; `[specificError]`
+1. `configuration` &#10142; `messages` &#10142; `invalid`
 
 ## Validation process
 
