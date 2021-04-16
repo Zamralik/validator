@@ -43,9 +43,9 @@ interface ValidatorConfiguration
 		preValidation?: (form: HTMLFormElement) => void | Promise<void>;
 		// Global validation, occurs if all fields natively valid.
 		validation?: (form: HTMLFormElement) => void | Promise<void>;
-		// If defined, the form must be submitted manually (form.submit()).
+		// If defined, the form must be submitted manually (form.submit() or fetch()).
 		postValidation?: (form: HTMLFormElement, valid: boolean) => void | Promise<void>;
-		// If defined, the form must be submitted manually (form.submit()).
+		// If defined, the form must be submitted manually (form.submit() or fetch()).
 		onValidationSuccess?: (form: HTMLFormElement) => void | Promise<void>;
 		onValidationFailure?: (form: HTMLFormElement) => void | Promise<void>;
 	};
@@ -58,6 +58,7 @@ interface ValidatorConfiguration
 				preValidation?: (field: HTMLFormField) => void | Promise<void>;
 				// Occurs after browser validation, an error or rejection fails the validation.
 				// If throws a ValidationError, it is used as message.
+				// Not executed if preValidation or HTML validation fails
 				validation?: (field: HTMLFormField) => void | Promise<void>;
 				// If resolved with a string, it is used as message
 				postValidation?: (field: HTMLFormField, valid: boolean) => undefined | string | Promise<undefined | string>;
@@ -71,5 +72,59 @@ interface ValidatorConfiguration
 		};
 	};
 }
+
+/*
+
+Messages order priority :
+- configuration.fields[fieldname].messages[specificError]
+- configuration.fields[fieldname].messages.invalid
+- configuration.messages[specificError]
+- configuration.messages.invalid
+*/
+
+/*
+Hook execution process
+{
+	form preValidation() hook
+
+	loop through fields
+	{
+		field preValidation() hook
+
+		if (field is still valid)
+		{
+			field browser validation
+		}
+
+		if (field is still valid)
+		{
+			field validation() hook
+		}
+
+		field postValidation() hook
+
+		if (field is valid)
+		{
+			field onValidationSuccess() hook
+		}
+		else
+		{
+			field onValidationFailure() hook
+		}
+	}
+
+	form validation() hook
+	form postValidation() hook
+
+	if (everything is valid)
+	{
+		form onValidationSuccess() hook
+	}
+	else
+	{
+		form onValidationFailure() hook
+	}
+}
+*/
 
 export type { ValidatorConfiguration };
