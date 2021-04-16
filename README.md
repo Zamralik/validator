@@ -4,73 +4,71 @@
 
 Everything is optional
 
-- **container**
-	Type `string`.
+- **container**<br />
+	Type `string`.<br />
 	CSS selector matching the root element on which the CSS classes will be toggled.
 	If missing or not found, will default to a common ancestor (for checkbox/radio inputs sharing a name),
 	the closest label, the parent element, or the fields themselves.
 - **styles**
-	- **valid**
-		Type `string`.
+	- **valid**<br />
+		Type `string`.<br />
 		CSS class added when field is valid, unused if missing.
-	- **invalid**
-		Type `string`.
+	- **invalid**<br />
+		Type `string`.<br />
 		CSS class added when field is invalid, default to "is-invalid".
-- **messenger**
-	Type `string`.
+- **messenger**<br />
+	Type `string`.<br />
 	CSS selector to find the element, descendant of the container, in which appropriate messages will be inserted.
-- **messages**
-	Type `ValidatorMessages`
+- **messages**<br />
+	Type `ValidatorMessages`<br />
 	See [Message Configuration](#message-configuration).
-- **hooks**
+- **hooks**<br />
 	See [Validation process](#validation-process) for the hook order of execution.
-	- **preValidation**
-		Type `(form: HTMLFormElement) => void | Promise<void>`
+	- **preValidation**<br />
+		Type `(form: HTMLFormElement) => void | Promise<void>`<br />
 		An error or rejection cancel the validation of the form.
-	- **validation**
-		Type `(form: HTMLFormElement) => void | Promise<void>`
+	- **validation**<br />
+		Type `(form: HTMLFormElement) => void | Promise<void>`<br />
 		Global validation, only called if all fields are individually valid.
-	- **postValidation**
-		Type `(form: HTMLFormElement, valid: boolean) => void | Promise<void>`
+	- **postValidation**<br />
+		Type `(form: HTMLFormElement, valid: boolean) => void | Promise<void>`<br />
 		If defined, the automatic `form.submit()` is disabled.
-	- **onValidationSuccess**
-		Type `(form: HTMLFormElement) => void | Promise<void>`
+	- **onValidationSuccess**<br />
+		Type `(form: HTMLFormElement) => void | Promise<void>`<br />
 		If defined, the automatic `form.submit()` is disabled.
-	- **onValidationFailure**
+	- **onValidationFailure**<br />
 		Type `(form: HTMLFormElement) => void | Promise<void>`;
-- **fields**
-	Type `Record<string, ValidatorFieldConfiguration>`
+- **fields**<br />
+	Type `Record<string, ValidatorFieldConfiguration>`<br />
 	Each configuration is associated by its name used as key. Surround names with special characters with quotes.
 	See [Field Configuration](#field-configuration)
 
 ## Field Configuration
 
-- **messages**
-	Type `ValidatorMessages`
+- **messages**<br />
+	Type `ValidatorMessages`<br />
 	See [Message Configuration](#message-configuration).
 - **hooks**
-	- **preValidation**:
-		Type `(field: HTMLFormField) => void | Promise<void>`
+	- **preValidation**:<br />
+		Type `(field: HTMLFormField) => void | Promise<void>`<br />
 		Executed before browser validation, it can be used to clean the value beforehand.
 		If it throws a ValidationError, it will be used as error message.
-
-	- **validation**
-		Type `(field: HTMLFormField) => void | Promise<void>`
+	- **validation**<br />
+		Type `(field: HTMLFormField) => void | Promise<void>`<br />
 		Executed after browser validation. Not executed if preValidation or browser validation fails.
 		An error or rejection fails the validation.
 		If it throws a ValidationError, it will be used as error message.
-
-	- **postValidation**
-		Type `(field: HTMLFormField, valid: boolean) => undefined | string | Promise<undefined | string>`;
+	- **postValidation**<br />
+		Type `(field: HTMLFormField, valid: boolean) => undefined | string | Promise<undefined | string>`;<br />
 		If it resolves with a string, it will be used as message.
-	- **onValidationSuccess**
-		Type `(field: HTMLFormField) => undefined | string | Promise<undefined | string>`
+	- **onValidationSuccess**<br />
+		Type `(field: HTMLFormField) => undefined | string | Promise<undefined | string>`<br />
 		If resolved with a string, it is used as message.
-	- **onValidationFailure**
-		Type `(field: HTMLFormField) => undefined | string | Promise<undefined | string>`
+	- **onValidationFailure**<br />
+		Type `(field: HTMLFormField) => undefined | string | Promise<undefined | string>`<br />
 		If resolved with a string, it is used as message.
-- **messages**
-	Type `ValidatorMessages`
+- **messages**<br />
+	Type `ValidatorMessages`<br />
 	See [Message Configuration](#message-configuration).
 
 ## Message configuration
@@ -80,19 +78,32 @@ Will be ignored if a message was given by a hook.
 
 ### Message keys
 
-- **valid**: Displayed when the field is valid. Defaults to an empty string.
-- **invalid**: Generic error message used as fallback for all other status but valid, defaults to "Invalid field".
-- **badInput**: Browser is unable to convert the user input. Pasting a name in a number input may cause this.
-- **customError**: Validation() hook has thrown.
-- **patternMismatch**: Value doesn't match the pattern (attribute: `pattern`).
-- **rangeOverflow**: Value exceed the maximum (attribute: `max`).
-- **rangeUnderflow**: Value doesn't reach the minimum (attribute: `min`).
-- **stepMismatch**: Value fall between two steps (attribute: `step`).
-- **tooLong**: Value has too many characters (attribute: `max-length`).
-- **tooShort**: Value doesn't have enough characters (attribute: `min-length`).
-- **typeMismatch**: Value doesn't match the type (email, number, date, ...) (attribute: `type`).
-- **valueMissing**: Field is required and value is missing (attribute: `required`).
-- **unknownError**: PreValidation() hook has thrown.
+- **valid**<br />
+	Displayed when the field is valid. Defaults to an empty string.
+- **invalid**<br />
+	Generic error message used as fallback for all other status but valid, defaults to "Invalid field".
+- **badInput**<br />
+	Browser is unable to convert the user input. Pasting a name in a number input may cause this.
+- **customError**<br />
+	Validation() hook has thrown.
+- **patternMismatch**<br />
+	Value doesn't match the pattern (attribute: `pattern`).
+- **rangeOverflow**<br />
+	Value exceed the maximum (attribute: `max`).
+- **rangeUnderflow**<br />
+	Value doesn't reach the minimum (attribute: `min`).
+- **stepMismatch**<br />
+	Value fall between two steps (attribute: `step`).
+- **tooLong**<br />
+	Value has too many characters (attribute: `max-length`).
+- **tooShort**<br />
+	Value doesn't have enough characters (attribute: `min-length`).
+- **typeMismatch**<br />
+	Value doesn't match the type (email, number, date, ...) (attribute: `type`).
+- **valueMissing**<br />
+	Field is required and value is missing (attribute: `required`).
+- **unknownError**<br />
+	PreValidation() hook has thrown.
 
 ### Messages order priority
 
