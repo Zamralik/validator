@@ -118,7 +118,7 @@ Will be ignored if a message was given by a hook.
 - loop through fields
 	- field `preValidation()` hook
 	- if (field is still valid)
-		-field browser validation
+		- field browser validation
 	- if (field is still valid)
 		- field `validation()` hook
 	- field `postValidation()` hook
