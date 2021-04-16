@@ -117,6 +117,8 @@ All the properties are optionals and of type `string`.
 
 ## Validation process
 
+Here is the simplified validation algorithm in pseudo-code
+
 ```
 form preValidation() hook
 
