@@ -158,7 +158,7 @@ If invalid:
 
 1. Hooks:
 	- preValidation, or field validation throwing a ValidationError.
-	- postValidation, onValidationFailure resolved with a string.
+	- postValidation, or onValidationFailure resolved with a string.
 1. `configuration` &#10142; `fields` &#10142; `[fieldname]` &#10142; `messages` &#10142; `[specificError]`
 1. `configuration` &#10142; `fields` &#10142; `[fieldname]` &#10142; `messages` &#10142; `invalid`
 1. `configuration` &#10142; `messages` &#10142; `[specificError]`
@@ -167,7 +167,7 @@ If invalid:
 If valid:
 
 1. Hooks:
-	- postValidation, onValidationSuccess resolved with a string.
+	- postValidation, or onValidationSuccess resolved with a string.
 1. `configuration` &#10142; `fields` &#10142; `[fieldname]` &#10142; `messages` &#10142; `valid`
 1. `configuration` &#10142; `messages` &#10142; `valid`
 
