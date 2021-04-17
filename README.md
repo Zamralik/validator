@@ -33,8 +33,9 @@ See [Configuration](#configuration) for details on asynchronous hooks.
 ## Configuration
 
 Everything is optional.<br />
+In hooks, checkbox and radio inputs sharing the same name are validated together, other fields are validated separately.
 Type `HTMLFormField` is an alias for<br />
-`HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | NodeListOf<HTMLInputElement>`
+`HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | NodeListOf<HTMLInputElement>`.
 
 - **container**<br />
 	Type `string`.<br />
