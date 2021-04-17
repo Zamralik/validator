@@ -163,6 +163,7 @@ If invalid:
 1. `configuration` &#10142; `fields` &#10142; `[fieldname]` &#10142; `messages` &#10142; `invalid`
 1. `configuration` &#10142; `messages` &#10142; `[specificError]`
 1. `configuration` &#10142; `messages` &#10142; `invalid`
+1. "Invalid field"
 
 If valid:
 
@@ -170,6 +171,7 @@ If valid:
 	- postValidation, or onValidationSuccess resolved with a string.
 1. `configuration` &#10142; `fields` &#10142; `[fieldname]` &#10142; `messages` &#10142; `valid`
 1. `configuration` &#10142; `messages` &#10142; `valid`
+1. Empty string
 
 ## Validation process
 
