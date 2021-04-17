@@ -14,7 +14,7 @@ Attach event listeners and automatically handle validation and submit.
 #### `async validateForm(enable_aftermath: boolean): Promise<boolean>`
 
 Manually trigger a validation of the whole form.<br />
-If `enable_aftermath` is set to true, might call `form.submit()` or execute post validation hooks.
+If you want a valid form to submit, or form `postValidation()`, form `onValidationSuccess()`, or form `onValidationFailure()` hooks to execute; then set `enable_aftermath` to true.
 
 ####  `async validateFieldSet(fieldset: HTMLFieldSetElement | string | number): Promise<boolean>`
 
