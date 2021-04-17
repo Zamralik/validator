@@ -1,5 +1,5 @@
 import type { HTMLEditableElement, HTMLFormField, ErrorKey, ExtendedErrorKey } from "./definitions/types.js";
-import type { ValidatorConfiguration } from "./definitions/ValidatorConfiguration.js";
+import type { ValidatorConfiguration, ValidatorMessages } from "./definitions/ValidatorConfiguration.js";
 import type { FieldValidationOutcome } from "./definitions/FieldValidationOutcome.js";
 
 import { ValidationError } from "./ValidationError.js";
@@ -532,14 +532,17 @@ class Validator
 
 	private getErrorMessage(field_name: string, error_key: ExtendedErrorKey): string
 	{
+		const SPECIFIC_MESSAGES: ValidatorMessages | undefined = this.configuration?.fields?.[field_name]?.messages;
+		const GENERIC_MESSAGES: ValidatorMessages | undefined = this.configuration?.messages;
+
 		return (
-			this.configuration?.fields?.[field_name]?.messages?.[error_key]
+			SPECIFIC_MESSAGES?.[error_key]
 			||
-			this.configuration?.fields?.[field_name]?.messages?.invalid
+			SPECIFIC_MESSAGES?.invalid
 			||
-			this.configuration?.messages?.[error_key]
+			GENERIC_MESSAGES?.[error_key]
 			||
-			this.configuration?.messages?.invalid
+			GENERIC_MESSAGES?.invalid
 			||
 			"Invalid field"
 		);

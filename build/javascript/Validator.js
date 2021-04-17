@@ -313,13 +313,15 @@ class Validator {
                 "");
     }
     getErrorMessage(field_name, error_key) {
-        return (this.configuration?.fields?.[field_name]?.messages?.[error_key]
+        const SPECIFIC_MESSAGES = this.configuration?.fields?.[field_name]?.messages;
+        const GENERIC_MESSAGES = this.configuration?.messages;
+        return (SPECIFIC_MESSAGES?.[error_key]
             ||
-                this.configuration?.fields?.[field_name]?.messages?.invalid
+                SPECIFIC_MESSAGES?.invalid
             ||
-                this.configuration?.messages?.[error_key]
+                GENERIC_MESSAGES?.[error_key]
             ||
-                this.configuration?.messages?.invalid
+                GENERIC_MESSAGES?.invalid
             ||
                 "Invalid field");
     }
