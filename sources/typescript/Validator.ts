@@ -10,9 +10,7 @@ class Validator
 
 	private readonly configuration: ValidatorConfiguration | undefined;
 
-	private processedCollectionNames: Array<string>;
-
-	private isProcessingFlag: boolean;
+	private isProcessing: boolean;
 
 	public constructor(form: string | HTMLFormElement, configuration?: ValidatorConfiguration)
 	{
@@ -35,8 +33,7 @@ class Validator
 		}
 
 		this.configuration = configuration;
-		this.processedCollectionNames = [];
-		this.isProcessingFlag = false;
+		this.isProcessing = false;
 	}
 
 	private static getErrorKey(editable: HTMLEditableElement): ExtendedErrorKey
@@ -70,7 +67,17 @@ class Validator
 			{
 				submit_event.preventDefault();
 				submit_event.stopImmediatePropagation();
-				await this.validate(true);
+
+				if (this.isProcessing)
+				{
+					return;
+				}
+
+				this.isProcessing = true;
+
+				await this.validateForm(true);
+
+				this.isProcessing = false;
 			},
 			true
 		);
@@ -86,19 +93,16 @@ class Validator
 		);
 	}
 
-	public isProcessing(): boolean
+	public async validateField(fieldname: string): Promise<boolean>
 	{
-		return this.isProcessingFlag;
-	}
+		const FIELD: HTMLFormField | null = this.form.elements.namedItem(fieldname) as HTMLFormField | null;
 
-	public async validateForm(enable_aftermath: boolean): Promise<boolean>
-	{
-		if (this.isProcessingFlag)
+		if (FIELD === null)
 		{
-			throw new Error("Already validating");
+			throw new Error(`No field named "${fieldname}"`);
 		}
 
-		return await this.validate(enable_aftermath);
+		return await this.validate(fieldname, FIELD);
 	}
 
 	public async validateFieldSet(fieldset: string | number | HTMLFieldSetElement): Promise<boolean>
@@ -150,43 +154,13 @@ class Validator
 			}
 		}
 
-		if (this.isProcessingFlag)
-		{
-			throw new Error("Already validating");
-		}
-
-		this.isProcessingFlag = true;
-
 		const RESULT: boolean = await this.validateAllFields(element);
-
-		// Clean after every validation to free memory
-		this.processedCollectionNames = [];
-		this.isProcessingFlag = false;
 
 		return RESULT;
 	}
 
-	public async validateField(fieldname: string): Promise<boolean>
+	public async validateForm(enable_aftermath: boolean): Promise<boolean>
 	{
-		const FIELD: HTMLFormField | null = this.form.elements.namedItem(fieldname) as HTMLFormField | null;
-
-		if (FIELD === null)
-		{
-			throw new Error(`No field named "${fieldname}"`);
-		}
-
-		return await this.validateEditable(Validator.isCollection(FIELD) ? FIELD[0] : FIELD);
-	}
-
-	private async validate(enable_aftermath: boolean): Promise<boolean>
-	{
-		if (this.isProcessingFlag)
-		{
-			return false;
-		}
-
-		this.isProcessingFlag = true;
-
 		let valid: boolean = false;
 
 		try
@@ -260,10 +234,6 @@ class Validator
 			}
 		}
 
-		// Clean after every validation to free memory
-		this.processedCollectionNames = [];
-		this.isProcessingFlag = false;
-
 		return valid;
 	}
 
@@ -273,13 +243,13 @@ class Validator
 		{
 			const EDITABLE_ELEMENTS: NodeListOf<HTMLEditableElement> = root.querySelectorAll("input[name], select[name], textarea[name]");
 
+			const PROCESSED_NAMES: Array<string> = [];
+
 			const OUTCOMES: Array<boolean> = await Promise.all(
 				Array.from(EDITABLE_ELEMENTS).map(
 					async (editable: HTMLEditableElement): Promise<boolean> =>
 					{
-						const VALID: boolean = await this.validateEditable(editable);
-
-						return VALID;
+						return await this.validateEditable(editable, PROCESSED_NAMES);
 					}
 				)
 			);
@@ -304,41 +274,48 @@ class Validator
 		}
 	}
 
-	private async validateEditable(editable: HTMLEditableElement): Promise<boolean>
+	private async validateEditable(editable: HTMLEditableElement, excluded_names?: Array<string>): Promise<boolean>
 	{
-		try
+		if (!editable.name)
 		{
-			const NAME: string = editable.name;
+			// Anonymous fields are ignored
+			return true;
+		}
 
-			if (!NAME)
+		let field: HTMLFormField;
+
+		// Radio & Checkboxes sharing the same name are processed as RadioNodeList
+		// Other editables sharing the same name are processed individually
+		if (editable.type === "checkbox" || editable.type === "radio")
+		{
+			if (excluded_names)
 			{
-				// Anonymous fields are valid
-				return true;
-			}
-
-			let field: HTMLFormField | null = null;
-
-			// Radio & Checkboxes sharing the same name are processed as RadioNodeList
-			// Other editables sharing the same name are processed individually
-			if (editable.type === "checkbox" || editable.type === "radio")
-			{
-				if (this.processedCollectionNames.includes(NAME))
+				if (excluded_names.includes(editable.name))
 				{
-					// Already processed names are valid
+					// Already processed names are ignored for checkbox and radio
 					return true;
 				}
 
-				this.processedCollectionNames.push(NAME);
-				field = this.form.elements.namedItem(NAME) as HTMLFormField;
-			}
-			else
-			{
-				field = editable;
+				excluded_names.push(editable.name);
 			}
 
-			const OUTCOME: FieldValidationOutcome = await this.getFieldValidity(NAME, field);
+			field = this.form.elements.namedItem(editable.name) as HTMLFormField;
+		}
+		else
+		{
+			field = editable;
+		}
 
-			await this.updateField(OUTCOME, NAME, field);
+		return await this.validate(editable.name, field);
+	}
+
+	private async validate(name: string, field: HTMLFormField): Promise<boolean>
+	{
+		try
+		{
+			const OUTCOME: FieldValidationOutcome = await this.getFieldValidity(name, field);
+
+			await this.updateField(OUTCOME, name, field);
 
 			return OUTCOME.success;
 		}

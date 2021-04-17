@@ -25,11 +25,6 @@ Accept an index number, a css selector, or the fieldset element directly as argu
 
 Validate a field by its name for fine checking freedom.
 
-#### `isProcessing(): boolean`
-
-Because validation is fully asynchronous, you may have to check if a full form or fieldset validation is ongoing.<br />
-See [Configuration](#configuration) for details on asynchronous hooks.
-
 ## Configuration
 
 Everything is optional.

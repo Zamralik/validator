@@ -14,8 +14,7 @@ class Validator {
             }
         }
         this.configuration = configuration;
-        this.processedCollectionNames = [];
-        this.isProcessingFlag = false;
+        this.isProcessing = false;
     }
     static getErrorKey(editable) {
         const VALIDITY = editable.validity;
@@ -32,21 +31,24 @@ class Validator {
         this.form.addEventListener("submit", async (submit_event) => {
             submit_event.preventDefault();
             submit_event.stopImmediatePropagation();
-            await this.validate(true);
+            if (this.isProcessing) {
+                return;
+            }
+            this.isProcessing = true;
+            await this.validateForm(true);
+            this.isProcessing = false;
         }, true);
         this.form.addEventListener("change", async (change_event) => {
             const EDITABLE_ELEMENT = change_event.target;
             await this.validateEditable(EDITABLE_ELEMENT);
         }, true);
     }
-    isProcessing() {
-        return this.isProcessingFlag;
-    }
-    async validateForm(enable_aftermath) {
-        if (this.isProcessingFlag) {
-            throw new Error("Already validating");
+    async validateField(fieldname) {
+        const FIELD = this.form.elements.namedItem(fieldname);
+        if (FIELD === null) {
+            throw new Error(`No field named "${fieldname}"`);
         }
-        return await this.validate(enable_aftermath);
+        return await this.validate(fieldname, FIELD);
     }
     async validateFieldSet(fieldset) {
         let element = null;
@@ -80,27 +82,10 @@ class Validator {
                 throw new Error(`Unable to find fieldset #${fieldset.toFixed(0)}`);
             }
         }
-        if (this.isProcessingFlag) {
-            throw new Error("Already validating");
-        }
-        this.isProcessingFlag = true;
         const RESULT = await this.validateAllFields(element);
-        this.processedCollectionNames = [];
-        this.isProcessingFlag = false;
         return RESULT;
     }
-    async validateField(fieldname) {
-        const FIELD = this.form.elements.namedItem(fieldname);
-        if (FIELD === null) {
-            throw new Error(`No field named "${fieldname}"`);
-        }
-        return await this.validateEditable(Validator.isCollection(FIELD) ? FIELD[0] : FIELD);
-    }
-    async validate(enable_aftermath) {
-        if (this.isProcessingFlag) {
-            return false;
-        }
-        this.isProcessingFlag = true;
+    async validateForm(enable_aftermath) {
         let valid = false;
         try {
             await this.configuration?.hooks?.preValidation?.(this.form);
@@ -147,16 +132,14 @@ class Validator {
                 console.log(error);
             }
         }
-        this.processedCollectionNames = [];
-        this.isProcessingFlag = false;
         return valid;
     }
     async validateAllFields(root) {
         try {
             const EDITABLE_ELEMENTS = root.querySelectorAll("input[name], select[name], textarea[name]");
+            const PROCESSED_NAMES = [];
             const OUTCOMES = await Promise.all(Array.from(EDITABLE_ELEMENTS).map(async (editable) => {
-                const VALID = await this.validateEditable(editable);
-                return VALID;
+                return await this.validateEditable(editable, PROCESSED_NAMES);
             }));
             const GLOBAL_VALID = OUTCOMES.every((outcome) => {
                 return outcome;
@@ -170,25 +153,29 @@ class Validator {
             return false;
         }
     }
-    async validateEditable(editable) {
-        try {
-            const NAME = editable.name;
-            if (!NAME) {
-                return true;
-            }
-            let field = null;
-            if (editable.type === "checkbox" || editable.type === "radio") {
-                if (this.processedCollectionNames.includes(NAME)) {
+    async validateEditable(editable, excluded_names) {
+        if (!editable.name) {
+            return true;
+        }
+        let field;
+        if (editable.type === "checkbox" || editable.type === "radio") {
+            if (excluded_names) {
+                if (excluded_names.includes(editable.name)) {
                     return true;
                 }
-                this.processedCollectionNames.push(NAME);
-                field = this.form.elements.namedItem(NAME);
+                excluded_names.push(editable.name);
             }
-            else {
-                field = editable;
-            }
-            const OUTCOME = await this.getFieldValidity(NAME, field);
-            await this.updateField(OUTCOME, NAME, field);
+            field = this.form.elements.namedItem(editable.name);
+        }
+        else {
+            field = editable;
+        }
+        return await this.validate(editable.name, field);
+    }
+    async validate(name, field) {
+        try {
+            const OUTCOME = await this.getFieldValidity(name, field);
+            await this.updateField(OUTCOME, name, field);
             return OUTCOME.success;
         }
         catch (error) {
