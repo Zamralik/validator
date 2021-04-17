@@ -80,7 +80,7 @@ Everything is optional.
 ## Field Configuration
 
 Type `HTMLFormField` is an alias for<br />
-`HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | NodeListOf<HTMLInputElement>`.
+`HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | NodeListOf<HTMLInputElement>`.<br />
 Checkbox and radio inputs sharing the same name are validated together as a RadioNodeList, other inputs are validated separately even if they have the same name.
 
 - **messages**<br />
