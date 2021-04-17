@@ -33,7 +33,8 @@ See [Configuration](#configuration) for details on asynchronous hooks.
 ## Configuration
 
 Everything is optional.<br />
-Type `HTMLFormField` is an alias for `HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | NodeListOf<HTMLInputElement>`.
+Type `HTMLFormField` is an alias for<br />
+`HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | NodeListOf<HTMLInputElement>`
 
 - **container**<br />
 	Type `string`.<br />
