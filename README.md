@@ -167,7 +167,6 @@ If invalid:
 If valid:
 
 1. Hooks:
-	- preValidation, or field validation throwing a ValidationError.
 	- postValidation, onValidationSuccess, onValidationFailure resolved with a string.
 1. `configuration` &#10142; `fields` &#10142; `[fieldname]` &#10142; `messages` &#10142; `valid`
 1. `configuration` &#10142; `messages` &#10142; `valid`
