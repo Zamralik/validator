@@ -1,5 +1,29 @@
 # Validator Documentation
 
+## Definition
+
+`constructor(form: HTMLFormElement | string, configuration?: ValidatorConfiguration);`<br />
+Accepts a form element or a css selector as first argument.<br />
+See [Configuration](#configuration) for the configuration argument.
+
+`watch(): void`<br />
+Attach event listeners and automatically handle validation and submit.
+
+`async validateForm(enable_aftermath: boolean): Promise<boolean>`<br />
+Manually trigger a validation of the whole form.<br />
+If `enable_aftermath` is set to true, might call `form.submit()` or execute post validation hooks.
+
+`async validateFieldSet(fieldset: HTMLFieldSetElement | string | number): Promise<boolean>`<br />
+If the form is multi-step, you can validate fieldsets individually.<br />
+Accept an index number, a css selector, or the fieldset element directly as argument.
+
+`async validateField(fieldname: string): Promise<boolean>`<br />
+Validate a field by its name for fine checking freedom.
+
+`isProcessing(): boolean`<br />
+Because validation is fully asynchronous, you may have to check if a full form or fieldset validation is ongoing.<br />
+See [Configuration](#configuration) for details on asynchronous hooks.
+
 ## Configuration
 
 Everything is optional

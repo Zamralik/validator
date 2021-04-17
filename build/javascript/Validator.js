@@ -15,7 +15,7 @@ class Validator {
         }
         this.configuration = configuration;
         this.processedCollectionNames = [];
-        this.isProcessing = false;
+        this.isProcessingFlag = false;
     }
     static getErrorKey(editable) {
         const VALIDITY = editable.validity;
@@ -39,13 +39,19 @@ class Validator {
             await this.validateEditable(EDITABLE_ELEMENT);
         }, true);
     }
-    async validateForm() {
-        await this.validate(false);
+    isProcessing() {
+        return this.isProcessingFlag;
+    }
+    async validateForm(enable_aftermath) {
+        if (this.isProcessingFlag) {
+            throw new Error("Already validating");
+        }
+        return await this.validate(enable_aftermath);
     }
     async validateFieldSet(fieldset) {
         let element = null;
         if (fieldset instanceof HTMLFieldSetElement) {
-            const OWNER_FORM = fieldset.closest("form");
+            const OWNER_FORM = (fieldset.form || fieldset.closest("form"));
             if (OWNER_FORM === this.form) {
                 element = fieldset;
             }
@@ -74,22 +80,31 @@ class Validator {
                 throw new Error(`Unable to find fieldset #${fieldset.toFixed(0)}`);
             }
         }
-        if (this.isProcessing) {
-            return;
+        if (this.isProcessingFlag) {
+            throw new Error("Already validating");
         }
-        this.isProcessing = true;
-        await this.validateAllFields(element);
+        this.isProcessingFlag = true;
+        const RESULT = await this.validateAllFields(element);
         this.processedCollectionNames = [];
-        this.isProcessing = false;
+        this.isProcessingFlag = false;
+        return RESULT;
     }
-    async validate(allow_submit) {
-        if (this.isProcessing) {
-            return;
+    async validateField(fieldname) {
+        const FIELD = this.form.elements.namedItem(fieldname);
+        if (FIELD === null) {
+            throw new Error(`No field named "${fieldname}"`);
         }
-        this.isProcessing = true;
+        return await this.validateEditable(Validator.isCollection(FIELD) ? FIELD[0] : FIELD);
+    }
+    async validate(enable_aftermath) {
+        if (this.isProcessingFlag) {
+            return false;
+        }
+        this.isProcessingFlag = true;
+        let valid = false;
         try {
             await this.configuration?.hooks?.preValidation?.(this.form);
-            let valid = await this.validateAllFields(this.form);
+            valid = await this.validateAllFields(this.form);
             if (valid) {
                 try {
                     await this.configuration?.hooks?.validation?.(this.form);
@@ -101,28 +116,28 @@ class Validator {
                     valid = false;
                 }
             }
-            if (valid
-                &&
-                    allow_submit
-                &&
-                    !(this.configuration?.hooks?.postValidation)
-                &&
-                    !(this.configuration?.hooks?.onValidationSuccess)) {
-                this.form.submit();
-            }
-            else {
-                try {
-                    await this.configuration?.hooks?.postValidation?.(this.form, valid);
-                    if (valid) {
-                        await this.configuration?.hooks?.onValidationSuccess?.(this.form);
-                    }
-                    else {
-                        await this.configuration?.hooks?.onValidationFailure?.(this.form);
-                    }
+            if (enable_aftermath) {
+                if (valid
+                    &&
+                        !(this.configuration?.hooks?.postValidation)
+                    &&
+                        !(this.configuration?.hooks?.onValidationSuccess)) {
+                    this.form.submit();
                 }
-                catch (error) {
-                    if (error instanceof Error) {
-                        console.log(error);
+                else {
+                    try {
+                        await this.configuration?.hooks?.postValidation?.(this.form, valid);
+                        if (valid) {
+                            await this.configuration?.hooks?.onValidationSuccess?.(this.form);
+                        }
+                        else {
+                            await this.configuration?.hooks?.onValidationFailure?.(this.form);
+                        }
+                    }
+                    catch (error) {
+                        if (error instanceof Error) {
+                            console.log(error);
+                        }
                     }
                 }
             }
@@ -133,7 +148,8 @@ class Validator {
             }
         }
         this.processedCollectionNames = [];
-        this.isProcessing = false;
+        this.isProcessingFlag = false;
+        return valid;
     }
     async validateAllFields(root) {
         try {
@@ -171,7 +187,7 @@ class Validator {
             else {
                 field = editable;
             }
-            const OUTCOME = await this.validateField(NAME, field);
+            const OUTCOME = await this.getFieldValidity(NAME, field);
             await this.updateField(OUTCOME, NAME, field);
             return OUTCOME.success;
         }
@@ -182,7 +198,7 @@ class Validator {
             return false;
         }
     }
-    async validateField(field_name, field) {
+    async getFieldValidity(field_name, field) {
         if (field instanceof HTMLInputElement && ["text", "number", "email", "tel", "url"].includes(field.type)) {
             field.value = field.value.trim();
         }
