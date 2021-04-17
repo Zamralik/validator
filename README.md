@@ -32,10 +32,7 @@ See [Configuration](#configuration) for details on asynchronous hooks.
 
 ## Configuration
 
-Everything is optional.<br />
-In hooks, checkbox and radio inputs sharing the same name are validated together, other fields are validated separately.
-Type `HTMLFormField` is an alias for<br />
-`HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | NodeListOf<HTMLInputElement>`.
+Everything is optional.
 
 - **container**<br />
 	Type `string`.<br />
@@ -81,6 +78,10 @@ Type `HTMLFormField` is an alias for<br />
 	See [Field Configuration](#field-configuration).
 
 ## Field Configuration
+
+Type `HTMLFormField` is an alias for<br />
+`HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | NodeListOf<HTMLInputElement>`.
+Checkbox and radio inputs sharing the same name are validated together as a RadioNodeList, other inputs are validated separately even if they have the same name.
 
 - **messages**<br />
 	Type `ValidatorMessages`<br />
