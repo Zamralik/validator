@@ -154,6 +154,9 @@ All the properties are optionals and of type `string`.
 
 ### Messages order priority
 
+1. Hooks:
+	- preValidation, or field validation throwing a ValidationError.
+	- postValidation, onValidationSuccess, onValidationFailure resolved with a string.
 1. `configuration` &#10142; `fields` &#10142; `[fieldname]` &#10142; `messages` &#10142; `[specificError]`
 1. `configuration` &#10142; `fields` &#10142; `[fieldname]` &#10142; `messages` &#10142; `invalid`
 1. `configuration` &#10142; `messages` &#10142; `[specificError]`
