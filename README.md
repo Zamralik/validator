@@ -51,21 +51,26 @@ Everything is optional
 	Type `ValidatorMessages`<br />
 	See [Message Configuration](#message-configuration).
 - **hooks**<br />
-	See [Validation process](#validation-process) for how each hook is used. Any hook can be asynchronous.
+	See [Validation process](#validation-process) for how each hook is used.
 	- **preValidation**<br />
-		Type `(form: HTMLFormElement) => void | Promise<void>`<br />
+		Type `(form: HTMLFormElement) => void`<br />
+		Type `async (form: HTMLFormElement) => Promise<void>`<br />
 		An error or rejection cancel the validation of the form.
 	- **validation**<br />
-		Type `(form: HTMLFormElement) => void | Promise<void>`<br />
+		Type `(form: HTMLFormElement) => void`<br />
+		Type `async (form: HTMLFormElement) => Promise<void>`<br />
 		Global validation, only called if all fields are individually valid.
 	- **postValidation**<br />
-		Type `(form: HTMLFormElement, valid: boolean) => void | Promise<void>`<br />
+		Type `(form: HTMLFormElement, valid: boolean) => void`<br />
+		Type `async (form: HTMLFormElement, valid: boolean) => Promise<void>`<br />
 		If defined, the automatic `form.submit()` is disabled.
 	- **onValidationSuccess**<br />
-		Type `(form: HTMLFormElement) => void | Promise<void>`<br />
+		Type `(form: HTMLFormElement) => void`<br />
+		Type `async (form: HTMLFormElement) => Promise<void>`<br />
 		If defined, the automatic `form.submit()` is disabled.
 	- **onValidationFailure**<br />
-		Type `(form: HTMLFormElement) => void | Promise<void>`;
+		Type `(form: HTMLFormElement) => void`;<br />
+		Type `async (form: HTMLFormElement) => Promise<void>`;
 - **fields**<br />
 	Type `Record<string, ValidatorFieldConfiguration>`<br />
 	Keys must be the name of the field on which to use the configuration.<br />
@@ -78,24 +83,29 @@ Everything is optional
 	Type `ValidatorMessages`<br />
 	See [Message Configuration](#message-configuration).
 - **hooks**<br />
-	See [Validation process](#validation-process) for how each hook is used. Any hook can be asynchronous.
+	See [Validation process](#validation-process) for how each hook is used.
 	- **preValidation**:<br />
-		Type `(field: HTMLFormField) => void | Promise<void>`<br />
+		Type `(field: HTMLFormField) => void`<br />
+		Type `async (field: HTMLFormField) => Promise<void>`<br />
 		Executed before browser validation, it can be used to clean the value beforehand.
 		If it throws a ValidationError, it will be used as error message.
 	- **validation**<br />
-		Type `(field: HTMLFormField) => void | Promise<void>`<br />
+		Type `(field: HTMLFormField) => void`<br />
+		Type `async (field: HTMLFormField) => Promise<void>`<br />
 		Executed after browser validation. Not executed if preValidation or browser validation fails.
 		An error or rejection fails the validation.
 		If it throws a ValidationError, it will be used as error message.
 	- **postValidation**<br />
-		Type `(field: HTMLFormField, valid: boolean) => undefined | string | Promise<undefined | string>`;<br />
+		Type `(field: HTMLFormField, valid: boolean) => undefined | string`;<br />
+		Type `async (field: HTMLFormField, valid: boolean) => Promise<undefined | string>`;<br />
 		If it resolves with a string, it will be used as message.
 	- **onValidationSuccess**<br />
-		Type `(field: HTMLFormField) => undefined | string | Promise<undefined | string>`<br />
+		Type `(field: HTMLFormField) => undefined | string`<br />
+		Type `async (field: HTMLFormField) => Promise<undefined | string>`<br />
 		If resolved with a string, it is used as message.
 	- **onValidationFailure**<br />
-		Type `(field: HTMLFormField) => undefined | string | Promise<undefined | string>`<br />
+		Type `(field: HTMLFormField) => undefined | string`<br />
+		Type `async (field: HTMLFormField) => Promise<undefined | string>`<br />
 		If resolved with a string, it is used as message.
 - **messages**<br />
 	Type `ValidatorMessages`<br />
