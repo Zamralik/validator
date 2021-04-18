@@ -25,6 +25,10 @@ Accept an index number, a css selector, or the fieldset element directly as argu
 
 Validate a field by its name for fine checking freedom.
 
+#### `getFieldsets(): Array<HTMLFieldSetElement>`
+
+Help with `validateFieldSet()`.
+
 ## Configuration
 
 Everything is optional.
