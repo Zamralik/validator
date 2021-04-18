@@ -16,16 +16,6 @@ class Validator {
         this.configuration = configuration;
         this.isProcessing = false;
     }
-    static getErrorKey(editable) {
-        const VALIDITY = editable.validity;
-        const ERROR_KEY = Object.getOwnPropertyNames(Object.getPrototypeOf(VALIDITY)).find((key) => {
-            return VALIDITY[key] === true;
-        });
-        return ERROR_KEY || "unknownError";
-    }
-    static isCollection(field) {
-        return (field instanceof RadioNodeList);
-    }
     watch() {
         this.form.noValidate = true;
         this.form.addEventListener("submit", async (submit_event) => {
@@ -42,6 +32,30 @@ class Validator {
             const EDITABLE_ELEMENT = change_event.target;
             await this.validateEditable(EDITABLE_ELEMENT);
         }, true);
+    }
+    getEditables(root) {
+        if (root.elements) {
+            return Array.from(root.elements).filter((element) => {
+                return Boolean(Validator.isEditableElement(element) && element.name);
+            });
+        }
+        else {
+            return Array.from(root.querySelectorAll("input[name], select[name], textarea[name]")).filter((editable) => {
+                return this.form === (editable.form || editable.closest("form"));
+            });
+        }
+    }
+    getFieldsets() {
+        if (this.form.elements) {
+            return Array.from(this.form.elements).filter((element) => {
+                return (element instanceof HTMLFieldSetElement);
+            });
+        }
+        else {
+            return Array.from(this.form.querySelectorAll("fieldset")).filter((fieldset) => {
+                return this.form === (fieldset.form || fieldset.closest("form"));
+            });
+        }
     }
     async validateField(fieldname) {
         const FIELD = this.form.elements.namedItem(fieldname);
@@ -74,7 +88,7 @@ class Validator {
             if (fieldset < 0 || !Number.isSafeInteger(fieldset)) {
                 throw new Error("Invalid argument");
             }
-            const FIELDSETS = this.form.querySelectorAll("fieldset");
+            const FIELDSETS = this.getFieldsets();
             if (fieldset < FIELDSETS.length) {
                 element = FIELDSETS[fieldset];
             }
@@ -136,7 +150,7 @@ class Validator {
     }
     async validateAllFields(root) {
         try {
-            const EDITABLE_ELEMENTS = root.querySelectorAll("input[name], select[name], textarea[name]");
+            const EDITABLE_ELEMENTS = this.getEditables(root);
             const PROCESSED_NAMES = [];
             const RESULTS = await Promise.all(Array.from(EDITABLE_ELEMENTS).map(async (editable) => {
                 return await this.validateEditable(editable, PROCESSED_NAMES);
@@ -323,6 +337,23 @@ class Validator {
                 GENERIC_MESSAGES?.invalid
             ||
                 "Invalid field");
+    }
+    static getErrorKey(editable) {
+        const VALIDITY = editable.validity;
+        const ERROR_KEY = Object.getOwnPropertyNames(Object.getPrototypeOf(VALIDITY)).find((key) => {
+            return VALIDITY[key] === true;
+        });
+        return ERROR_KEY || "unknownError";
+    }
+    static isCollection(field) {
+        return (field instanceof RadioNodeList);
+    }
+    static isEditableElement(element) {
+        return (element instanceof HTMLInputElement
+            ||
+                element instanceof HTMLSelectElement
+            ||
+                element instanceof HTMLTextAreaElement);
     }
 }
 export { Validator };

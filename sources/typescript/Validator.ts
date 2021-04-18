@@ -36,26 +36,6 @@ class Validator
 		this.isProcessing = false;
 	}
 
-	private static getErrorKey(editable: HTMLEditableElement): ExtendedErrorKey
-	{
-		const VALIDITY: ValidityState = editable.validity;
-
-		const ERROR_KEY: ErrorKey | undefined = Object.getOwnPropertyNames(Object.getPrototypeOf(VALIDITY)).find(
-			(key: string): boolean =>
-			{
-				return VALIDITY[key as ErrorKey] === true;
-			}
-		) as ErrorKey | undefined;
-
-		return ERROR_KEY || "unknownError";
-	}
-
-	// In TypeScript, RadioNodeList is not compatible with type NodeListOf<TNode extends Node>
-	private static isCollection(field: HTMLFormField): field is NodeListOf<HTMLInputElement>
-	{
-		return (field instanceof RadioNodeList);
-	}
-
 	public watch(): void
 	{
 		// Disable native validation
@@ -91,6 +71,50 @@ class Validator
 			},
 			true
 		);
+	}
+
+	private getEditables(root: HTMLFormElement | HTMLFieldSetElement): Array<HTMLEditableElement>
+	{
+		if (root.elements)
+		{
+			return Array.from(root.elements).filter(
+				(element: Element): element is HTMLEditableElement =>
+				{
+					return Boolean(Validator.isEditableElement(element) && element.name);
+				}
+			);
+		}
+		else
+		{
+			return Array.from(root.querySelectorAll("input[name], select[name], textarea[name]") as NodeListOf<HTMLEditableElement>).filter(
+				(editable: HTMLEditableElement): boolean =>
+				{
+					return this.form === (editable.form || editable.closest("form"));
+				}
+			);
+		}
+	}
+
+	public getFieldsets(): Array<HTMLFieldSetElement>
+	{
+		if (this.form.elements)
+		{
+			return Array.from(this.form.elements).filter(
+				(element: Element): element is HTMLFieldSetElement =>
+				{
+					return (element instanceof HTMLFieldSetElement);
+				}
+			);
+		}
+		else
+		{
+			return Array.from(this.form.querySelectorAll("fieldset")).filter(
+				(fieldset: HTMLFieldSetElement): boolean =>
+				{
+					return this.form === (fieldset.form || fieldset.closest("form"));
+				}
+			);
+		}
 	}
 
 	public async validateField(fieldname: string): Promise<boolean>
@@ -142,7 +166,7 @@ class Validator
 				throw new Error("Invalid argument");
 			}
 
-			const FIELDSETS: NodeListOf<HTMLFieldSetElement> = this.form.querySelectorAll("fieldset");
+			const FIELDSETS: Array<HTMLFieldSetElement> = this.getFieldsets();
 
 			if (fieldset < FIELDSETS.length)
 			{
@@ -241,7 +265,7 @@ class Validator
 	{
 		try
 		{
-			const EDITABLE_ELEMENTS: NodeListOf<HTMLEditableElement> = root.querySelectorAll("input[name], select[name], textarea[name]");
+			const EDITABLE_ELEMENTS: Array<HTMLEditableElement> = this.getEditables(root);
 
 			const PROCESSED_NAMES: Array<string> = [];
 
@@ -543,6 +567,38 @@ class Validator
 			GENERIC_MESSAGES?.invalid
 			||
 			"Invalid field"
+		);
+	}
+
+	private static getErrorKey(editable: HTMLEditableElement): ExtendedErrorKey
+	{
+		const VALIDITY: ValidityState = editable.validity;
+
+		const ERROR_KEY: ErrorKey | undefined = Object.getOwnPropertyNames(Object.getPrototypeOf(VALIDITY)).find(
+			(key: string): boolean =>
+			{
+				// Must be checked for strictly true to ignore other properties
+				return VALIDITY[key as ErrorKey] === true;
+			}
+		) as ErrorKey | undefined;
+
+		return ERROR_KEY || "unknownError";
+	}
+
+	// In TypeScript, RadioNodeList is not compatible with type NodeListOf<TNode extends Node>
+	private static isCollection(field: HTMLFormField): field is NodeListOf<HTMLInputElement>
+	{
+		return (field instanceof RadioNodeList);
+	}
+
+	private static isEditableElement(element: Element): element is HTMLEditableElement
+	{
+		return (
+			element instanceof HTMLInputElement
+			||
+			element instanceof HTMLSelectElement
+			||
+			element instanceof HTMLTextAreaElement
 		);
 	}
 }
