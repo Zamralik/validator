@@ -245,7 +245,7 @@ class Validator
 
 			const PROCESSED_NAMES: Array<string> = [];
 
-			const OUTCOMES: Array<boolean> = await Promise.all(
+			const RESULTS: Array<boolean> = await Promise.all(
 				Array.from(EDITABLE_ELEMENTS).map(
 					async (editable: HTMLEditableElement): Promise<boolean> =>
 					{
@@ -254,14 +254,12 @@ class Validator
 				)
 			);
 
-			const GLOBAL_VALID: boolean = OUTCOMES.every(
-				(outcome) =>
+			return RESULTS.every(
+				(result: boolean): boolean =>
 				{
-					return outcome;
+					return result;
 				}
 			);
-
-			return GLOBAL_VALID;
 		}
 		catch (error: unknown)
 		{

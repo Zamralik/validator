@@ -138,13 +138,12 @@ class Validator {
         try {
             const EDITABLE_ELEMENTS = root.querySelectorAll("input[name], select[name], textarea[name]");
             const PROCESSED_NAMES = [];
-            const OUTCOMES = await Promise.all(Array.from(EDITABLE_ELEMENTS).map(async (editable) => {
+            const RESULTS = await Promise.all(Array.from(EDITABLE_ELEMENTS).map(async (editable) => {
                 return await this.validateEditable(editable, PROCESSED_NAMES);
             }));
-            const GLOBAL_VALID = OUTCOMES.every((outcome) => {
-                return outcome;
+            return RESULTS.every((result) => {
+                return result;
             });
-            return GLOBAL_VALID;
         }
         catch (error) {
             if (error instanceof Error) {
