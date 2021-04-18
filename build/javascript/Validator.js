@@ -66,25 +66,7 @@ class Validator {
     }
     async validateFieldSet(fieldset) {
         let element = null;
-        if (fieldset instanceof HTMLFieldSetElement) {
-            const OWNER_FORM = (fieldset.form || fieldset.closest("form"));
-            if (OWNER_FORM === this.form) {
-                element = fieldset;
-            }
-            else {
-                throw new Error("This fieldset belong to an other form");
-            }
-        }
-        else if (typeof fieldset === "string") {
-            const ELEMENT = this.form.querySelector(fieldset);
-            if (ELEMENT instanceof HTMLFieldSetElement) {
-                element = ELEMENT;
-            }
-            else {
-                throw new Error(`Unable to find fieldset element in form using selector "${fieldset}"`);
-            }
-        }
-        else {
+        if (typeof fieldset === "number") {
             if (fieldset < 0 || !Number.isSafeInteger(fieldset)) {
                 throw new Error("Invalid argument");
             }
@@ -94,6 +76,27 @@ class Validator {
             }
             else {
                 throw new Error(`Unable to find fieldset #${fieldset.toFixed(0)}`);
+            }
+        }
+        else {
+            if (fieldset instanceof HTMLFieldSetElement) {
+                element = fieldset;
+            }
+            else if (typeof fieldset === "string") {
+                const ELEMENT = this.form.querySelector(fieldset);
+                if (ELEMENT instanceof HTMLFieldSetElement) {
+                    element = ELEMENT;
+                }
+                else {
+                    throw new Error(`Unable to find fieldset element in form using selector "${fieldset}"`);
+                }
+            }
+            if (element === null) {
+                throw new Error("Invalid argument");
+            }
+            const OWNER_FORM = (element.form || element.closest("form"));
+            if (OWNER_FORM !== this.form) {
+                throw new Error("This fieldset belong to an other form");
             }
         }
         const RESULT = await this.validateAllFields(element);
