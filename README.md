@@ -12,7 +12,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 # Version
 
-[![Version: 1.0]](https://github.com/Zamralik/validator/releases/tag/v1.0)
+[![Version](https://img.shields.io/badge/version-v1.0-blue.svg)](https://github.com/Zamralik/validator/releases/tag/v1.0)
 
 # Documentation
 ## Definition
