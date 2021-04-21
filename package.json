@@ -19,5 +19,5 @@
 		"build": "npx eslint sources && tsc"
 	},
 	"author": "",
-	"license": "ISC"
+	"license": "MIT"
 }
