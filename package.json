@@ -18,6 +18,10 @@
 	"scripts": {
 		"build": "npx eslint sources && tsc"
 	},
-	"author": "",
+	"author": {
+		"name": "Benjamin Blum",
+		"email": "zamralik@gmail.com",
+		"site": "https://github.com/Zamralik"
+	},
 	"license": "MIT"
 }
