@@ -27,11 +27,47 @@ class Validator {
             this.isProcessing = true;
             await this.validateForm(true);
             this.isProcessing = false;
-        }, true);
+        }, {
+            capture: true
+        });
+        this.form.addEventListener("reset", () => {
+            this.reset();
+        }, {
+            passive: true,
+            capture: true
+        });
         this.form.addEventListener("change", async (change_event) => {
             const EDITABLE_ELEMENT = change_event.target;
             await this.validateEditable(EDITABLE_ELEMENT);
-        }, true);
+        }, {
+            passive: true,
+            capture: true
+        });
+    }
+    reset() {
+        this.getEditables(this.form).forEach((editable) => {
+            const CONTAINER_SELECTOR = this.configuration?.container;
+            if (CONTAINER_SELECTOR) {
+                const CONTAINER = editable.closest(CONTAINER_SELECTOR);
+                if (CONTAINER) {
+                    const INVALID_STYLE = this.configuration?.styles?.invalid;
+                    const VALID_STYLE = this.configuration?.styles?.valid;
+                    if (INVALID_STYLE) {
+                        CONTAINER.classList.remove(INVALID_STYLE);
+                    }
+                    if (VALID_STYLE) {
+                        CONTAINER.classList.remove(VALID_STYLE);
+                    }
+                    const MESSENGER_SELECTOR = this.configuration?.messenger;
+                    if (MESSENGER_SELECTOR) {
+                        const MESSENGER = CONTAINER.querySelector(MESSENGER_SELECTOR);
+                        if (MESSENGER) {
+                            MESSENGER.textContent = "";
+                        }
+                    }
+                }
+            }
+        });
     }
     getEditables(root) {
         if (root.elements) {
