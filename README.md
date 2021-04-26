@@ -44,6 +44,10 @@ Validate a field by its name for fine checking freedom.
 
 Help with `validateFieldSet()`.
 
+#### `reset(): void`
+
+Reset the form, clearing all css classes and messages.
+
 ## Configuration
 
 Everything is optional.

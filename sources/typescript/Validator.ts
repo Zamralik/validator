@@ -59,7 +59,21 @@ class Validator
 
 				this.isProcessing = false;
 			},
-			true
+			{
+				capture: true
+			}
+		);
+
+		this.form.addEventListener(
+			"reset",
+			(): void =>
+			{
+				this.reset();
+			},
+			{
+				passive: true,
+				capture: true
+			}
 		);
 
 		this.form.addEventListener(
@@ -69,7 +83,53 @@ class Validator
 				const EDITABLE_ELEMENT: HTMLEditableElement = change_event.target as HTMLEditableElement;
 				await this.validateEditable(EDITABLE_ELEMENT);
 			},
-			true
+			{
+				passive: true,
+				capture: true
+			}
+		);
+	}
+
+	public reset(): void
+	{
+		this.getEditables(this.form).forEach(
+			(editable: HTMLEditableElement): void =>
+			{
+				const CONTAINER_SELECTOR: string | undefined = this.configuration?.container;
+
+				if (CONTAINER_SELECTOR)
+				{
+					const CONTAINER: Element | null = editable.closest(CONTAINER_SELECTOR);
+
+					if (CONTAINER)
+					{
+						const INVALID_STYLE: string | undefined = this.configuration?.styles?.invalid;
+						const VALID_STYLE: string | undefined = this.configuration?.styles?.valid;
+
+						if (INVALID_STYLE)
+						{
+							CONTAINER.classList.remove(INVALID_STYLE);
+						}
+
+						if (VALID_STYLE)
+						{
+							CONTAINER.classList.remove(VALID_STYLE);
+						}
+
+						const MESSENGER_SELECTOR: string | undefined = this.configuration?.messenger;
+
+						if (MESSENGER_SELECTOR)
+						{
+							const MESSENGER: Element | null = CONTAINER.querySelector(MESSENGER_SELECTOR);
+
+							if (MESSENGER)
+							{
+								MESSENGER.textContent = "";
+							}
+						}
+					}
+				}
+			}
 		);
 	}
 
