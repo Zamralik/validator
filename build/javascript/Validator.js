@@ -96,14 +96,14 @@ class Validator {
         }
         else {
             if (!Validator.isEditableElement(target)) {
-                throw new Error(`This is not an editable element`);
+                throw new Error("This is not an editable element");
             }
             if (!target.name) {
-                throw new Error(`This field has no name`);
+                throw new Error("This field has no name");
             }
             const OWNER_FORM = (target.form || target.closest("form"));
             if (OWNER_FORM !== this.form) {
-                throw new Error(`This field belong to an other form`);
+                throw new Error("This field belong to an other form");
             }
             return await this.validate(target.name, target);
         }
