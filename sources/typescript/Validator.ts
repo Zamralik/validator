@@ -38,7 +38,7 @@ class Validator
 
 	public watch(): void
 	{
-		// Disable native validation
+		// Native validation prevent submit event from firing
 		this.form.noValidate = true;
 
 		this.form.addEventListener(
