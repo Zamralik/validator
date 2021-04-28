@@ -36,7 +36,7 @@ Attach event listeners and automatically handle validation and submit.<br />
 Event listened :
 - `submit`, execute `validateForm(true)`
 - `reset`, execute `reset()`
-- `change`, execute `validateField(event.target)`.
+- `change`, execute `validateField(event.target.name)`.
 
 #### `async validateForm(enable_aftermath: boolean): Promise<boolean>`
 
