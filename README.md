@@ -15,6 +15,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [![Version](https://img.shields.io/badge/version-v1.0-blue.svg)](https://github.com/Zamralik/validator/releases/tag/v1.0)
 
 # Documentation
+
+## Glossary
+
+- `HTMLEditableElement`
+	Type alias for `HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement`
+- `HTMLFormField`
+	Type alias for `HTMLEditableElement | NodeListOf<HTMLInputElement>`
+
 ## Definition
 
 #### `constructor(form: HTMLFormElement | string, configuration?: ValidatorConfiguration);`
@@ -104,9 +112,7 @@ Everything is optional.
 
 ## Field Configuration
 
-Type `HTMLFormField` is an alias for<br />
-`HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | NodeListOf<HTMLInputElement>`.<br />
-Checkbox and radio inputs sharing the same name are validated together as a RadioNodeList, other inputs are validated separately even if they have the same name.
+Checkbox and radio inputs sharing the same name are validated together. Other fields are always validated separately.
 
 - **messages**<br />
 	Type `ValidatorMessages`<br />
