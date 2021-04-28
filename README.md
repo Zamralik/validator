@@ -24,11 +24,11 @@ See [Configuration](#configuration) for the configuration argument.
 
 #### `watch(): void`
 
-Attach event listeners and automatically handle validation and submit.
+Attach event listeners and automatically handle validation and submit.<br />
 Event listened :
 - `submit`, execute `validateForm(true)`
 - `reset`, execute `reset()`
-- `change`, execute `validateField(event.target.name)`.
+- `change`, execute `validateField(event.target)`.
 
 #### `async validateForm(enable_aftermath: boolean): Promise<boolean>`
 
@@ -40,13 +40,14 @@ If you want a valid form to submit, or form `postValidation()`, form `onValidati
 If the form is multi-step, you can validate fieldsets individually.<br />
 Accept an index number, a css selector, or the fieldset element directly as argument.
 
-#### `async validateField(fieldname: string): Promise<boolean>`
+#### `async validateField(identifier: string | HTMLEditableElement): Promise<boolean>`
 
-Validate a field by its name for fine checking freedom.
+Take a name, an `<input>`, a `<select>`, or a `<textarea>` as argument.<br />
+If the argument is a name, it'll validate all the elements with that name, otherwise, it'll validate only the given element.
 
 #### `getFieldsets(): Array<HTMLFieldSetElement>`
 
-Help with `validateFieldSet()`.
+Help with `validateFieldSet()` by returning all the form's fieldsets.
 
 #### `reset(): void`
 

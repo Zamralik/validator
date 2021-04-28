@@ -37,8 +37,9 @@ class Validator {
             capture: true
         });
         this.form.addEventListener("change", async (change_event) => {
-            const EDITABLE_ELEMENT = change_event.target;
-            await this.validateEditable(EDITABLE_ELEMENT);
+            if (Validator.isEditableElement(change_event.target)) {
+                await this.validateEditable(change_event.target);
+            }
         }, {
             passive: true,
             capture: true
@@ -70,35 +71,42 @@ class Validator {
         });
     }
     getEditables(root) {
-        if (root.elements) {
-            return Array.from(root.elements).filter((element) => {
-                return Boolean(Validator.isEditableElement(element) && element.name);
-            });
-        }
-        else {
-            return Array.from(root.querySelectorAll("input[name], select[name], textarea[name]")).filter((editable) => {
-                return this.form === (editable.form || editable.closest("form"));
-            });
-        }
+        return Array.from(root.elements).filter((element) => {
+            return Boolean(Validator.isEditableElement(element) && element.name);
+        });
     }
     getFieldsets() {
-        if (this.form.elements) {
-            return Array.from(this.form.elements).filter((element) => {
-                return (element instanceof HTMLFieldSetElement);
-            });
+        return Array.from(this.form.elements).filter((element) => {
+            return (element instanceof HTMLFieldSetElement);
+        });
+    }
+    async validateField(target) {
+        if (typeof target === "string") {
+            let field = this.form.elements.namedItem(target);
+            if (field === null) {
+                throw new Error(`No field named "${target}"`);
+            }
+            if (Validator.isCollection(field)) {
+                field = field[0];
+            }
+            if (!Validator.isEditableElement(field)) {
+                throw new Error(`No editable element named "${target}" found`);
+            }
+            return await this.validateEditable(field);
         }
         else {
-            return Array.from(this.form.querySelectorAll("fieldset")).filter((fieldset) => {
-                return this.form === (fieldset.form || fieldset.closest("form"));
-            });
+            if (!Validator.isEditableElement(target)) {
+                throw new Error(`This is not an editable element`);
+            }
+            if (!target.name) {
+                throw new Error(`This field has no name`);
+            }
+            const OWNER_FORM = (target.form || target.closest("form"));
+            if (OWNER_FORM !== this.form) {
+                throw new Error(`This field belong to an other form`);
+            }
+            return await this.validate(target.name, target);
         }
-    }
-    async validateField(fieldname) {
-        const FIELD = this.form.elements.namedItem(fieldname);
-        if (FIELD === null) {
-            throw new Error(`No field named "${fieldname}"`);
-        }
-        return await this.validate(fieldname, FIELD);
     }
     async validateFieldSet(fieldset) {
         let element = null;

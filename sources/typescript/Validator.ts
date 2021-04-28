@@ -80,8 +80,10 @@ class Validator
 			"change",
 			async (change_event: Event): Promise<void> =>
 			{
-				const EDITABLE_ELEMENT: HTMLEditableElement = change_event.target as HTMLEditableElement;
-				await this.validateEditable(EDITABLE_ELEMENT);
+				if (Validator.isEditableElement(change_event.target))
+				{
+					await this.validateEditable(change_event.target);
+				}
 			},
 			{
 				passive: true,
@@ -135,58 +137,68 @@ class Validator
 
 	private getEditables(root: HTMLFormElement | HTMLFieldSetElement): Array<HTMLEditableElement>
 	{
-		if (root.elements)
-		{
-			return Array.from(root.elements).filter(
-				(element: Element): element is HTMLEditableElement =>
-				{
-					return Boolean(Validator.isEditableElement(element) && element.name);
-				}
-			);
-		}
-		else
-		{
-			return Array.from(root.querySelectorAll("input[name], select[name], textarea[name]") as NodeListOf<HTMLEditableElement>).filter(
-				(editable: HTMLEditableElement): boolean =>
-				{
-					return this.form === (editable.form || editable.closest("form"));
-				}
-			);
-		}
+		return Array.from(root.elements).filter(
+			(element: Element): element is HTMLEditableElement =>
+			{
+				return Boolean(Validator.isEditableElement(element) && element.name);
+			}
+		);
 	}
 
 	public getFieldsets(): Array<HTMLFieldSetElement>
 	{
-		if (this.form.elements)
+		return Array.from(this.form.elements).filter(
+			(element: Element): element is HTMLFieldSetElement =>
+			{
+				return (element instanceof HTMLFieldSetElement);
+			}
+		);
+	}
+
+	public async validateField(target: string | HTMLEditableElement): Promise<boolean>
+	{
+		if (typeof target === "string")
 		{
-			return Array.from(this.form.elements).filter(
-				(element: Element): element is HTMLFieldSetElement =>
-				{
-					return (element instanceof HTMLFieldSetElement);
-				}
-			);
+			let field: Element | RadioNodeList | null = this.form.elements.namedItem(target);
+
+			if (field === null)
+			{
+				throw new Error(`No field named "${target}"`);
+			}
+
+			if (Validator.isCollection(field))
+			{
+				field = field[0];
+			}
+
+			if (!Validator.isEditableElement(field))
+			{
+				throw new Error(`No editable element named "${target}" found`);
+			}
+
+			return await this.validateEditable(field);
 		}
 		else
 		{
-			return Array.from(this.form.querySelectorAll("fieldset")).filter(
-				(fieldset: HTMLFieldSetElement): boolean =>
-				{
-					return this.form === (fieldset.form || fieldset.closest("form"));
-				}
-			);
+			if (!Validator.isEditableElement(target))
+			{
+				throw new Error(`This is not an editable element`);
+			}
+
+			if (!target.name)
+			{
+				throw new Error(`This field has no name`);
+			}
+
+			const OWNER_FORM: HTMLFormElement | null = (target.form || target.closest("form"));
+
+			if (OWNER_FORM !== this.form)
+			{
+				throw new Error(`This field belong to an other form`);
+			}
+
+			return await this.validate(target.name, target);
 		}
-	}
-
-	public async validateField(fieldname: string): Promise<boolean>
-	{
-		const FIELD: HTMLFormField | null = this.form.elements.namedItem(fieldname) as HTMLFormField | null;
-
-		if (FIELD === null)
-		{
-			throw new Error(`No field named "${fieldname}"`);
-		}
-
-		return await this.validate(fieldname, FIELD);
 	}
 
 	public async validateFieldSet(fieldset: string | number | HTMLFieldSetElement): Promise<boolean>
@@ -652,12 +664,12 @@ class Validator
 	}
 
 	// In TypeScript, RadioNodeList is not compatible with type NodeListOf<TNode extends Node>
-	private static isCollection(field: HTMLFormField): field is NodeListOf<HTMLInputElement>
+	private static isCollection(field: any): field is NodeListOf<HTMLInputElement>
 	{
 		return (field instanceof RadioNodeList);
 	}
 
-	private static isEditableElement(element: Element): element is HTMLEditableElement
+	private static isEditableElement(element: any): element is HTMLEditableElement
 	{
 		return (
 			element instanceof HTMLInputElement
