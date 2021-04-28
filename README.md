@@ -25,6 +25,10 @@ See [Configuration](#configuration) for the configuration argument.
 #### `watch(): void`
 
 Attach event listeners and automatically handle validation and submit.
+Event listened :
+- `submit`, execute `validateForm(true)`
+- `reset`, execute `reset()`
+- `change`, execute `validateField(event.target.name)`.
 
 #### `async validateForm(enable_aftermath: boolean): Promise<boolean>`
 
@@ -47,6 +51,8 @@ Help with `validateFieldSet()`.
 #### `reset(): void`
 
 Reset the form, clearing all css classes and messages.
+If you want to clear fields, you'll have to call `form.reset()` separately.
+Note that while `form.submit()` do not dispatch any event, `form.reset()` dispatch a reset event.
 
 ## Configuration
 
