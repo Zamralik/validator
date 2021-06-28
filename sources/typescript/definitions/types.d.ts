@@ -4,9 +4,9 @@
 /* eslint-disable line-comment-position */
 /* eslint-disable no-inline-comments */
 
-declare type HTMLEditableElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+declare type HTMLEditableElement = HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement;
 
-declare type HTMLFormField = HTMLEditableElement | NodeListOf<HTMLInputElement>;
+declare type HTMLFormField = HTMLEditableElement|NodeListOf<HTMLInputElement>;
 
 declare type ErrorKey = (
 	"badInput"
@@ -30,6 +30,6 @@ declare type ErrorKey = (
 	"valueMissing"
 );
 
-declare type ExtendedErrorKey = "unknownError" | ErrorKey;
+declare type ExtendedErrorKey = "unknownError"|ErrorKey;
 
 export { HTMLEditableElement, HTMLFormField, ErrorKey, ExtendedErrorKey };

@@ -8,11 +8,11 @@ class Validator
 {
 	private readonly form: HTMLFormElement;
 
-	private readonly configuration: ValidatorConfiguration | undefined;
+	private readonly configuration: ValidatorConfiguration|undefined;
 
 	private isProcessing: boolean;
 
-	public constructor(form: string | HTMLFormElement, configuration?: ValidatorConfiguration)
+	public constructor(form: string|HTMLFormElement, configuration?: ValidatorConfiguration)
 	{
 		if (form instanceof HTMLFormElement)
 		{
@@ -20,7 +20,7 @@ class Validator
 		}
 		else
 		{
-			const ELEMENT: Element | null = document.querySelector(form);
+			const ELEMENT: Element|null = document.querySelector(form);
 
 			if (ELEMENT instanceof HTMLFormElement)
 			{
@@ -97,16 +97,16 @@ class Validator
 		this.getEditables(this.form).forEach(
 			(editable: HTMLEditableElement): void =>
 			{
-				const CONTAINER_SELECTOR: string | undefined = this.configuration?.container;
+				const CONTAINER_SELECTOR: string|undefined = this.configuration?.container;
 
 				if (CONTAINER_SELECTOR)
 				{
-					const CONTAINER: Element | null = editable.closest(CONTAINER_SELECTOR);
+					const CONTAINER: Element|null = editable.closest(CONTAINER_SELECTOR);
 
 					if (CONTAINER)
 					{
-						const INVALID_STYLE: string | undefined = this.configuration?.styles?.invalid;
-						const VALID_STYLE: string | undefined = this.configuration?.styles?.valid;
+						const INVALID_STYLE: string|undefined = this.configuration?.styles?.invalid;
+						const VALID_STYLE: string|undefined = this.configuration?.styles?.valid;
 
 						if (INVALID_STYLE)
 						{
@@ -118,11 +118,11 @@ class Validator
 							CONTAINER.classList.remove(VALID_STYLE);
 						}
 
-						const MESSENGER_SELECTOR: string | undefined = this.configuration?.messenger;
+						const MESSENGER_SELECTOR: string|undefined = this.configuration?.messenger;
 
 						if (MESSENGER_SELECTOR)
 						{
-							const MESSENGER: Element | null = CONTAINER.querySelector(MESSENGER_SELECTOR);
+							const MESSENGER: Element|null = CONTAINER.querySelector(MESSENGER_SELECTOR);
 
 							if (MESSENGER)
 							{
@@ -135,7 +135,7 @@ class Validator
 		);
 	}
 
-	private getEditables(root: HTMLFormElement | HTMLFieldSetElement): Array<HTMLEditableElement>
+	private getEditables(root: HTMLFormElement|HTMLFieldSetElement): Array<HTMLEditableElement>
 	{
 		return Array.from(root.elements).filter(
 			(element: Element): element is HTMLEditableElement =>
@@ -155,11 +155,11 @@ class Validator
 		);
 	}
 
-	public async validateField(target: string | HTMLEditableElement): Promise<boolean>
+	public async validateField(target: string|HTMLEditableElement): Promise<boolean>
 	{
 		if (typeof target === "string")
 		{
-			let field: Element | RadioNodeList | null = this.form.elements.namedItem(target);
+			let field: Element|RadioNodeList|null = this.form.elements.namedItem(target);
 
 			if (field === null)
 			{
@@ -190,7 +190,7 @@ class Validator
 				throw new Error("This field has no name");
 			}
 
-			const OWNER_FORM: HTMLFormElement | null = (target.form || target.closest("form"));
+			const OWNER_FORM: HTMLFormElement|null = (target.form || target.closest("form"));
 
 			if (OWNER_FORM !== this.form)
 			{
@@ -201,9 +201,9 @@ class Validator
 		}
 	}
 
-	public async validateFieldSet(fieldset: string | number | HTMLFieldSetElement): Promise<boolean>
+	public async validateFieldSet(fieldset: string|number|HTMLFieldSetElement): Promise<boolean>
 	{
-		let element: HTMLFieldSetElement | null = null;
+		let element: HTMLFieldSetElement|null = null;
 
 		if (typeof fieldset === "number")
 		{
@@ -231,7 +231,7 @@ class Validator
 			}
 			else if (typeof fieldset === "string")
 			{
-				const ELEMENT: Element | null = this.form.querySelector(fieldset);
+				const ELEMENT: Element|null = this.form.querySelector(fieldset);
 
 				if (ELEMENT instanceof HTMLFieldSetElement)
 				{
@@ -248,7 +248,7 @@ class Validator
 				throw new Error("Invalid argument");
 			}
 
-			const OWNER_FORM: HTMLFormElement | null = (element.form || element.closest("form"));
+			const OWNER_FORM: HTMLFormElement|null = (element.form || element.closest("form"));
 
 			if (OWNER_FORM !== this.form)
 			{
@@ -339,7 +339,7 @@ class Validator
 		return valid;
 	}
 
-	private async validateAllFields(root: HTMLFormElement | HTMLFieldSetElement): Promise<boolean>
+	private async validateAllFields(root: HTMLFormElement|HTMLFieldSetElement): Promise<boolean>
 	{
 		try
 		{
@@ -512,12 +512,12 @@ class Validator
 	{
 		try
 		{
-			let message: string | undefined = outcome.customMessage;
+			let message: string|undefined = outcome.customMessage;
 
 			try
 			{
 				// If resolved with a string, override message
-				const CUSTOM_MESSAGE: string | undefined = await this.configuration?.fields?.[field_name]?.hooks?.postValidation?.(field, outcome.success);
+				const CUSTOM_MESSAGE: string|undefined = await this.configuration?.fields?.[field_name]?.hooks?.postValidation?.(field, outcome.success) as string|undefined;
 
 				if (typeof CUSTOM_MESSAGE === "string")
 				{
@@ -537,7 +537,7 @@ class Validator
 				if (outcome.success)
 				{
 					// If resolved with a string, override message
-					const CUSTOM_MESSAGE: string | undefined = await this.configuration?.fields?.[field_name]?.hooks?.onValidationSuccess?.(field);
+					const CUSTOM_MESSAGE: string|undefined = await this.configuration?.fields?.[field_name]?.hooks?.onValidationSuccess?.(field) as string|undefined;
 
 					if (typeof CUSTOM_MESSAGE === "string")
 					{
@@ -547,7 +547,7 @@ class Validator
 				else
 				{
 					// If resolved with a string, override message
-					const CUSTOM_MESSAGE: string | undefined = await this.configuration?.fields?.[field_name]?.hooks?.onValidationFailure?.(field);
+					const CUSTOM_MESSAGE: string|undefined = await this.configuration?.fields?.[field_name]?.hooks?.onValidationFailure?.(field) as string|undefined;
 
 					if (typeof CUSTOM_MESSAGE === "string")
 					{
@@ -563,16 +563,16 @@ class Validator
 				}
 			}
 
-			const CONTAINER_SELECTOR: string | undefined = this.configuration?.container;
+			const CONTAINER_SELECTOR: string|undefined = this.configuration?.container;
 
 			if (CONTAINER_SELECTOR)
 			{
-				const CONTAINER: Element | null = (Validator.isCollection(field) ? field[0] : field).closest(CONTAINER_SELECTOR);
+				const CONTAINER: Element|null = (Validator.isCollection(field) ? field[0] : field).closest(CONTAINER_SELECTOR);
 
 				if (CONTAINER)
 				{
-					const OLD_STYLE: string | undefined = outcome.success ? this.configuration?.styles?.invalid : this.configuration?.styles?.valid;
-					const NEW_STYLE: string | undefined = outcome.success ? this.configuration?.styles?.valid : this.configuration?.styles?.invalid;
+					const OLD_STYLE: string|undefined = outcome.success ? this.configuration?.styles?.invalid : this.configuration?.styles?.valid;
+					const NEW_STYLE: string|undefined = outcome.success ? this.configuration?.styles?.valid : this.configuration?.styles?.invalid;
 
 					if (OLD_STYLE)
 					{
@@ -584,11 +584,11 @@ class Validator
 						CONTAINER.classList.add(NEW_STYLE);
 					}
 
-					const MESSENGER_SELECTOR: string | undefined = this.configuration?.messenger;
+					const MESSENGER_SELECTOR: string|undefined = this.configuration?.messenger;
 
 					if (MESSENGER_SELECTOR)
 					{
-						const MESSENGER: Element | null = CONTAINER.querySelector(MESSENGER_SELECTOR);
+						const MESSENGER: Element|null = CONTAINER.querySelector(MESSENGER_SELECTOR);
 
 						if (MESSENGER)
 						{
@@ -632,8 +632,8 @@ class Validator
 
 	private getErrorMessage(field_name: string, error_key: ExtendedErrorKey): string
 	{
-		const SPECIFIC_MESSAGES: ValidatorMessages | undefined = this.configuration?.fields?.[field_name]?.messages;
-		const GENERIC_MESSAGES: ValidatorMessages | undefined = this.configuration?.messages;
+		const SPECIFIC_MESSAGES: ValidatorMessages|undefined = this.configuration?.fields?.[field_name]?.messages;
+		const GENERIC_MESSAGES: ValidatorMessages|undefined = this.configuration?.messages;
 
 		return (
 			SPECIFIC_MESSAGES?.[error_key]
@@ -652,13 +652,13 @@ class Validator
 	{
 		const VALIDITY: ValidityState = editable.validity;
 
-		const ERROR_KEY: ErrorKey | undefined = Object.getOwnPropertyNames(Object.getPrototypeOf(VALIDITY)).find(
+		const ERROR_KEY: ErrorKey|undefined = Object.getOwnPropertyNames(Object.getPrototypeOf(VALIDITY)).find(
 			(key: string): boolean =>
 			{
 				// Must be checked for strictly true to ignore other properties
 				return VALIDITY[key as ErrorKey] === true;
 			}
-		) as ErrorKey | undefined;
+		) as ErrorKey|undefined;
 
 		return ERROR_KEY || "unknownError";
 	}

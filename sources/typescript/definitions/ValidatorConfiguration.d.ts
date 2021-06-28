@@ -22,16 +22,66 @@ interface ValidatorMessages
 	unknownError?: string;
 }
 
+type ValidatorFieldBasicHook = (
+	((field: HTMLFormField) => void)
+	|
+	((field: HTMLFormField) => Promise<void>)
+);
+
+type ValidatorFieldMessengerHook = (
+	((field: HTMLFormField) => void)
+	|
+	((field: HTMLFormField) => string|undefined)
+	|
+	((field: HTMLFormField) => Promise<void>)
+	|
+	((field: HTMLFormField) => Promise<string|undefined>)
+);
+
+type ValidatorFieldPostHook = (
+	((field: HTMLFormField, valid: boolean) => void)
+	|
+	((field: HTMLFormField, valid: boolean) => string|undefined)
+	|
+	((field: HTMLFormField, valid: boolean) => Promise<void>)
+	|
+	((field: HTMLFormField, valid: boolean) => Promise<string|undefined>)
+);
+
+interface ValidatorFieldHooks
+{
+	preValidation?: ValidatorFieldBasicHook;
+	validation?: ValidatorFieldBasicHook;
+	postValidation?: ValidatorFieldPostHook;
+	onValidationSuccess?: ValidatorFieldMessengerHook;
+	onValidationFailure?: ValidatorFieldMessengerHook;
+}
+
 interface ValidatorFieldConfiguration
 {
-	hooks?: {
-		preValidation?: (field: HTMLFormField) => void | Promise<void>;
-		validation?: (field: HTMLFormField) => void | Promise<void>;
-		postValidation?: (field: HTMLFormField, valid: boolean) => undefined | string | Promise<undefined | string>;
-		onValidationSuccess?: (field: HTMLFormField) => undefined | string | Promise<undefined | string>;
-		onValidationFailure?: (field: HTMLFormField) => undefined | string | Promise<undefined | string>;
-	};
+	hooks?: ValidatorFieldHooks;
 	messages?: ValidatorMessages;
+}
+
+type ValidatorFormBasicHook = (
+	((form: HTMLFormElement) => void)
+	|
+	((form: HTMLFormElement) => Promise<void>)
+);
+
+type ValidatorFormPostHook = (
+	((form: HTMLFormElement, valid: boolean) => void)
+	|
+	((form: HTMLFormElement, valid: boolean) => Promise<void>)
+);
+
+interface ValidatorFormHooks
+{
+	preValidation?: ValidatorFormBasicHook;
+	validation?: ValidatorFormBasicHook;
+	postValidation?: ValidatorFormPostHook;
+	onValidationSuccess?: ValidatorFormBasicHook;
+	onValidationFailure?: ValidatorFormBasicHook;
 }
 
 interface ValidatorConfiguration
@@ -43,14 +93,14 @@ interface ValidatorConfiguration
 	};
 	messenger?: string;
 	messages?: ValidatorMessages;
-	hooks?: {
-		preValidation?: (form: HTMLFormElement) => void | Promise<void>;
-		validation?: (form: HTMLFormElement) => void | Promise<void>;
-		postValidation?: (form: HTMLFormElement, valid: boolean) => void | Promise<void>;
-		onValidationSuccess?: (form: HTMLFormElement) => void | Promise<void>;
-		onValidationFailure?: (form: HTMLFormElement) => void | Promise<void>;
-	};
+	hooks?: ValidatorFormHooks;
 	fields?: Record<string, ValidatorFieldConfiguration>;
 }
 
-export type { ValidatorConfiguration, ValidatorFieldConfiguration, ValidatorMessages };
+export type {
+	ValidatorConfiguration,
+	ValidatorFieldConfiguration,
+	ValidatorMessages,
+	ValidatorFormHooks,
+	ValidatorFieldHooks
+};
