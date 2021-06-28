@@ -32,4 +32,9 @@ declare type ErrorKey = (
 
 declare type ExtendedErrorKey = "unknownError"|ErrorKey;
 
-export { HTMLEditableElement, HTMLFormField, ErrorKey, ExtendedErrorKey };
+export {
+	HTMLEditableElement,
+	HTMLFormField,
+	ErrorKey,
+	ExtendedErrorKey
+};
