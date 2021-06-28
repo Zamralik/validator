@@ -517,7 +517,7 @@ class Validator
 			try
 			{
 				// If resolved with a string, override message
-				const CUSTOM_MESSAGE: string|undefined = await this.configuration?.fields?.[field_name]?.hooks?.postValidation?.(field, outcome.success) as string|undefined;
+				const CUSTOM_MESSAGE: void|string|undefined = await this.configuration?.fields?.[field_name]?.hooks?.postValidation?.(field, outcome.success);
 
 				if (typeof CUSTOM_MESSAGE === "string")
 				{
@@ -537,7 +537,7 @@ class Validator
 				if (outcome.success)
 				{
 					// If resolved with a string, override message
-					const CUSTOM_MESSAGE: string|undefined = await this.configuration?.fields?.[field_name]?.hooks?.onValidationSuccess?.(field) as string|undefined;
+					const CUSTOM_MESSAGE: void|string|undefined = await this.configuration?.fields?.[field_name]?.hooks?.onValidationSuccess?.(field);
 
 					if (typeof CUSTOM_MESSAGE === "string")
 					{
@@ -547,7 +547,7 @@ class Validator
 				else
 				{
 					// If resolved with a string, override message
-					const CUSTOM_MESSAGE: string|undefined = await this.configuration?.fields?.[field_name]?.hooks?.onValidationFailure?.(field) as string|undefined;
+					const CUSTOM_MESSAGE: void|string|undefined = await this.configuration?.fields?.[field_name]?.hooks?.onValidationFailure?.(field);
 
 					if (typeof CUSTOM_MESSAGE === "string")
 					{
@@ -650,15 +650,25 @@ class Validator
 
 	private static getErrorKey(editable: HTMLEditableElement): ExtendedErrorKey
 	{
-		const VALIDITY: ValidityState = editable.validity;
+		const ERROR_KEYS: Array<ErrorKey> = [
+			"badInput",
+			"customError",
+			"patternMismatch",
+			"rangeOverflow",
+			"rangeUnderflow",
+			"stepMismatch",
+			"tooLong",
+			"tooShort",
+			"typeMismatch",
+			"valueMissing"
+		];
 
-		const ERROR_KEY: ErrorKey|undefined = Object.getOwnPropertyNames(Object.getPrototypeOf(VALIDITY)).find(
-			(key: string): boolean =>
+		const ERROR_KEY: ErrorKey|undefined = ERROR_KEYS.find(
+			(key: ErrorKey): boolean =>
 			{
-				// Must be checked for strictly true to ignore other properties
-				return VALIDITY[key as ErrorKey] === true;
+				return editable.validity[key];
 			}
-		) as ErrorKey|undefined;
+		);
 
 		return ERROR_KEY || "unknownError";
 	}

@@ -386,9 +386,20 @@ class Validator {
                 "Invalid field");
     }
     static getErrorKey(editable) {
-        const VALIDITY = editable.validity;
-        const ERROR_KEY = Object.getOwnPropertyNames(Object.getPrototypeOf(VALIDITY)).find((key) => {
-            return VALIDITY[key] === true;
+        const ERROR_KEYS = [
+            "badInput",
+            "customError",
+            "patternMismatch",
+            "rangeOverflow",
+            "rangeUnderflow",
+            "stepMismatch",
+            "tooLong",
+            "tooShort",
+            "typeMismatch",
+            "valueMissing"
+        ];
+        const ERROR_KEY = ERROR_KEYS.find((key) => {
+            return editable.validity[key];
         });
         return ERROR_KEY || "unknownError";
     }
