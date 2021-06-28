@@ -4,11 +4,11 @@
 /* eslint-disable no-inline-comments */
 
 import type {
-	ValidatorFieldBasicHook,
-	ValidatorFieldMessengerHook,
-	ValidatorFieldPostHook,
-	ValidatorFormBasicHook,
-	ValidatorFormPostHook
+	ValidatorFieldHookBasic,
+	ValidatorFieldHookMessenger,
+	ValidatorFieldHookMergedMessenger,
+	ValidatorFormHookBasic,
+	ValidatorFormHookMerged
 } from "./hooks.js";
 
 interface ValidatorMessages
@@ -30,11 +30,11 @@ interface ValidatorMessages
 
 interface ValidatorFieldHooks
 {
-	preValidation?: ValidatorFieldBasicHook;
-	validation?: ValidatorFieldBasicHook;
-	postValidation?: ValidatorFieldPostHook;
-	onValidationSuccess?: ValidatorFieldMessengerHook;
-	onValidationFailure?: ValidatorFieldMessengerHook;
+	preValidation?: ValidatorFieldHookBasic;
+	validation?: ValidatorFieldHookBasic;
+	postValidation?: ValidatorFieldHookMergedMessenger;
+	onValidationSuccess?: ValidatorFieldHookMessenger;
+	onValidationFailure?: ValidatorFieldHookMessenger;
 }
 
 interface ValidatorFieldConfiguration
@@ -45,11 +45,11 @@ interface ValidatorFieldConfiguration
 
 interface ValidatorFormHooks
 {
-	preValidation?: ValidatorFormBasicHook;
-	validation?: ValidatorFormBasicHook;
-	postValidation?: ValidatorFormPostHook;
-	onValidationSuccess?: ValidatorFormBasicHook;
-	onValidationFailure?: ValidatorFormBasicHook;
+	preValidation?: ValidatorFormHookBasic;
+	validation?: ValidatorFormHookBasic;
+	postValidation?: ValidatorFormHookMerged;
+	onValidationSuccess?: ValidatorFormHookBasic;
+	onValidationFailure?: ValidatorFormHookBasic;
 }
 
 interface ValidatorConfiguration
